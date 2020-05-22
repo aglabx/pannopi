@@ -29,10 +29,12 @@ def main(settings):
         assembly_file = "??????????????" ##### УЗНАТЬ НАПИСАТЬ ДОПОЛНИТЬ
 
     config = """
-    raw_fastq_1 : {raw_fastq_1}
-    raw_fastq_2 : {raw_fastq_2}
-    path_to_reads : {path_to_reads}
-    prefix : {prefix}
+    assembler = "rules/{assembler}.sf"
+    annotator = "rules/{annotator}.sf"
+    raw_fastq_1 : "{raw_fastq_1}"
+    raw_fastq_2 : "{raw_fastq_2}"
+    path_to_reads : "{path_to_reads}"
+    prefix : "{prefix}"
 
     #PREPARE
     trim_out_file_1 :  "{path_to_reads}/trim/{prefix}.trim_1.fastq",
@@ -109,14 +111,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Program description.')
     parser.add_argument('-w','--workdir', help='sample directory', required=True)
     parser.add_argument('-a','--assembler', help='assebler tool: spades, unicycler or skesa', required=True)
+    parser.add_argument('-n','--annotator', help='annotation tool: pgap or prokka', required=True)
     args = vars(parser.parse_args())
 
     work_dir = args["workdir"]
     assembler = args["assembler"]
+    annotator = args["annotator"]
 
     settings = {
         "work_dir": work_dir,
         "assembler": assembler,
+        "annotator" : annotator
     }
 
     main(settings)

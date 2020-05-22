@@ -1,16 +1,16 @@
 import os
 import os.path
 
-raw_fastq_1 = "/mnt/projects/dzilov/o-test/ecoli19/Ecoli19-2_S2_L001_1.fastq"
-raw_fastq_2 = "/mnt/projects/dzilov/o-test/ecoli19/Ecoli19-2_S2_L001_2.fastq"
+config["raw_fastq_1"] = "/mnt/projects/dzilov/o-test/ecoli19/Ecoli19-2_S2_L001_1.fastq"
+config["raw_fastq_2"] = "/mnt/projects/dzilov/o-test/ecoli19/Ecoli19-2_S2_L001_2.fastq"
 
 #/mnt/projects/dzilov/o-test/Salmon1418/results/Salmon14-182_S4_L001_intrs_genes.txt
 
-input1 = raw_fastq_1.split("/")
+input1 = config["raw_fastq_1"].split("/")
 file_pref = input1[-1].split("_")
-file1_pref = "_".join(file_pref[0:-1])
+config["prefix"] = "_".join(file_pref[0:-1])
 path_to_reads = "/".join(input1[0:-1])
-#print(file1_pref)
+#print(config["prefix"])
 reads_folder = input1[-2]
 #print(reads_folder)
 #print(path_to_reads)
@@ -26,23 +26,23 @@ config = {
         "goobo" : "tools/goanno/GOanno.py",
         "obo_annotation" : "tools/goanno/go.obo",
         #PREFIXES
-        "trim_in_prefix" : path_to_reads + "/" + file1_pref,
-        "trim_out_prefix" : path_to_reads + "/trim/" + file1_pref,
-        "rmdub_in_prefix" : path_to_reads + "/trim/" + file1_pref + ".trim",
-        "rmdub_out_prefix" : path_to_reads + "/rmdub/" + file1_pref + ".rm",
+        "trim_in_prefix" : path_to_reads + "/" + config["prefix"],
+        "trim_out_prefix" : path_to_reads + "/trim/" + config["prefix"],
+        "rmdub_in_prefix" : path_to_reads + "/trim/" + config["prefix"] + ".trim",
+        "rmdub_out_prefix" : path_to_reads + "/rmdub/" + config["prefix"] + ".rm",
         #START OPEARATIONS FILES
-        "trim_out_file_1" :  path_to_reads + "/trim/" + file1_pref + ".trim_1.fastq",
-        "trim_out_file_2" : path_to_reads + "/trim/" + file1_pref + ".trim_2.fastq",
-        "rmdub_file_1" : path_to_reads + "/rmdub/" + file1_pref + ".rm_1.fastq",
-        "rmdub_file_2" : path_to_reads + "/rmdub/" + file1_pref + ".rm_2.fastq",
+        "trim_out_file_1" :  path_to_reads + "/trim/" + config["prefix"] + ".trim_1.fastq",
+        "trim_out_file_2" : path_to_reads + "/trim/" + config["prefix"] + ".trim_2.fastq",
+        "rmdub_file_1" : path_to_reads + "/rmdub/" + config["prefix"] + ".rm_1.fastq",
+        "rmdub_file_2" : path_to_reads + "/rmdub/" + config["prefix"] + ".rm_2.fastq",
         #FASTQC
         "fastqc1_dir" : path_to_reads + "/fastqc/" + "fastqc_raw",
         "fastqc2_dir" : path_to_reads + "/fastqc/" + "fastqc_clean",
-        "fastqc_file1" : path_to_reads + "/fastqc/" + "fastqc_raw/" + file1_pref + "_1_fastqc.zip",
-        "fastqc_file2" : path_to_reads + "/fastqc/" + "fastqc_clean/" + file1_pref + ".rm_2_fastqc.zip",
+        "fastqc_file1" : path_to_reads + "/fastqc/" + "fastqc_raw/" + config["prefix"] + "_1_fastqc.zip",
+        "fastqc_file2" : path_to_reads + "/fastqc/" + "fastqc_clean/" + config["prefix"] + ".rm_2_fastqc.zip",
         #JELLY FILES
-        "jellycount_file" : path_to_reads + "/jellyfish/" + file1_pref + ".jf2",
-        "jellyhisto_file" : path_to_reads + "/jellyfish/" + file1_pref + ".histo",
+        "jellycount_file" : path_to_reads + "/jellyfish/" + config["prefix"] + ".jf2",
+        "jellyhisto_file" : path_to_reads + "/jellyfish/" + config["prefix"] + ".histo",
         "scope_dir" : path_to_reads + "/jellyfish/scope/",
         "scope_file" : path_to_reads +  "/jellyfish/scope/plot.png",
         #ASSEMBLY
@@ -56,25 +56,25 @@ config = {
         "quast_dir" : path_to_reads + "/quast",
         "quast_out_file" : path_to_reads + "/quast/report.txt",
         "reference_dir" : path_to_reads + "/reference/",
-        "reference_file" : path_to_reads + "/reference/" + file1_pref + ".fna",
+        "reference_file" : path_to_reads + "/reference/" + config["prefix"] + ".fna",
 
         #UNI ANNOTATION BRANCH
         #BLAST
-        "blastn_uni_out" : path_to_reads + "/blast/unicycler/" + file1_pref +".outfmt6",
+        "blastn_uni_out" : path_to_reads + "/blast/unicycler/" + config["prefix"] +".outfmt6",
         # FILTERING
-        "filter_uni_out" : path_to_reads + "/blast/unicycler/" + file1_pref + ".best_single_hits.blastn",
+        "filter_uni_out" : path_to_reads + "/blast/unicycler/" + config["prefix"] + ".best_single_hits.blastn",
         "index_uni_file" :  path_to_reads + "/unicycler/assembly.fasta.fai",
         "assembly_filtered" : path_to_reads + "/contera/unicycler/assembly_filtered.fasta",
         "unicon_dir" :  path_to_reads + "/contera/unicycler/",
-        "unicon_report" : path_to_reads + "/contera/unicycler/" + file1_pref + ".contera_report.txt",
+        "unicon_report" : path_to_reads + "/contera/unicycler/" + config["prefix"] + ".contera_report.txt",
         # ANNOTATION
         "prokka_uni_dir" : path_to_reads + "/prokka/unicycler/",
-        "prokka_uni_faa" : path_to_reads + "/prokka/unicycler/" + file1_pref + ".faa",
+        "prokka_uni_faa" : path_to_reads + "/prokka/unicycler/" + config["prefix"] + ".faa",
         # FUNCTIONAL ANNOTATION
         "eggnog_uni_dir" : path_to_reads + "/eggnog/unicycler/",
-        "eggnog_uni_ann" : path_to_reads + "/eggnog/unicycler/" + file1_pref + ".emapper.annotations",
+        "eggnog_uni_ann" : path_to_reads + "/eggnog/unicycler/" + config["prefix"] + ".emapper.annotations",
         "goann_uni_outdir" : path_to_reads + "/goann/unicycler/",
-        "goann_uni_out" : path_to_reads + "/goann/unicycler/" + file1_pref + "_genes_analysis.txt",
+        "goann_uni_out" : path_to_reads + "/goann/unicycler/" + config["prefix"] + "_genes_analysis.txt",
         "funcan_dir_uni" : path_to_reads + "/funcan/unicycler/",
         "megares_uni" : path_to_reads + "/funcan/unicycler/megares_report.txt",
         "ncbi_uni" : path_to_reads + "/funcan/unicycler/ncbi_report.txt",
@@ -85,24 +85,24 @@ config = {
         "mlst_uni" : path_to_reads + "/funcan/unicycler/mlst_type.txt",
         #RESULT STEP
         "results_uni_path" : path_to_reads + "/results/unicycler/",
-        "results_uni_file" : path_to_reads + "/results/unicycler/" + file1_pref + "_genes_analysis.txt",
+        "results_uni_file" : path_to_reads + "/results/unicycler/" + config["prefix"] + "_genes_analysis.txt",
 
         #SPADES ANNOTATION BRANCH
         # BLAST
-        "blastn_spad_out" : path_to_reads + "/blast/spades/" + file1_pref +".outfmt6",
+        "blastn_spad_out" : path_to_reads + "/blast/spades/" + config["prefix"] +".outfmt6",
          # FILTERING
-        "filter_spad_out" : path_to_reads + "/blast/spades/" + file1_pref + ".best_single_hits.blastn",
+        "filter_spad_out" : path_to_reads + "/blast/spades/" + config["prefix"] + ".best_single_hits.blastn",
         "index_spad_file" : path_to_reads + "/unicycler/spades_assembly/assembly/scaffolds.fasta.fai",
         "scaffolds_filtered" : path_to_reads + "/contera/spades/scaffolds_filtered.fasta",
         "spadcon_dir" :  path_to_reads + "/contera/spades/",
-        "spadcon_report" : path_to_reads + "/contera/spades/" + file1_pref + ".contera_report.txt",
+        "spadcon_report" : path_to_reads + "/contera/spades/" + config["prefix"] + ".contera_report.txt",
          # ANNOTATION
         "prokka_spad_dir" : path_to_reads + "/prokka/spades",
-        "prokka_spad_faa" : path_to_reads + "/prokka/spades/" + file1_pref + ".faa",
-        "prokka_spad_gbk" : path_to_reads + "/prokka/spades/" + file1_pref + ".gbk",
+        "prokka_spad_faa" : path_to_reads + "/prokka/spades/" + config["prefix"] + ".faa",
+        "prokka_spad_gbk" : path_to_reads + "/prokka/spades/" + config["prefix"] + ".gbk",
         # FUNCTIONAL ANNOTATION
         "eggnog_spad_dir" : path_to_reads + "/eggnog/spades/",
-        "eggnog_spad_ann" : path_to_reads + "/eggnog/spades/" + file1_pref + ".emapper.annotations",
+        "eggnog_spad_ann" : path_to_reads + "/eggnog/spades/" + config["prefix"] + ".emapper.annotations",
         "funcan_dir_spad" : path_to_reads + "/funcan/spades/",
         "megares_spad" : path_to_reads + "/funcan/spades/megares_report.txt",
         "ncbi_spad" : path_to_reads + "/funcan/spades/ncbi_report.txt",
@@ -112,10 +112,10 @@ config = {
         "funcan_sum_spad" : path_to_reads + "/funcan/spades/AMR_and_virulence_report.txt",
         "mlst_spad" : path_to_reads + "/funcan/spades/mlst_type.txt",
         "goann_spad_outdir" : path_to_reads + "/goann/spades/",
-        "goann_spad_out" : path_to_reads + "/goann/spades/" + file1_pref + "_genes_analysis.txt",
+        "goann_spad_out" : path_to_reads + "/goann/spades/" + config["prefix"] + "_genes_analysis.txt",
         #RESULT STEP
         "results_spad_path" : path_to_reads + "/results/spades/",
-        "results_spad_file" : path_to_reads + "/results/spades/" + file1_pref + "_genes_analysis.txt",
+        "results_spad_file" : path_to_reads + "/results/spades/" + config["prefix"] + "_genes_analysis.txt",
      }
 
 rule all:
@@ -129,8 +129,8 @@ rule trim:
     message:
         "Trimming the raw reads"
     input:
-        forward_read = raw_fastq_1,
-        rewerse_read = raw_fastq_2
+        forward_read = config["raw_fastq_1"],
+        rewerse_read = config["raw_fastq_2"]
     output:
         trim_out_file1 = config["trim_out_file_1"],
         trim_out_file2 = config["trim_out_file_2"]
@@ -172,8 +172,8 @@ rule rmdub:
 
 rule fastqc1:
     input:
-        forward_read = raw_fastq_1,
-        rewerse_read = raw_fastq_2
+        forward_read = config["raw_fastq_1"],
+        rewerse_read = config["raw_fastq_2"]
     conda:
         "envs/fastqc.yaml"
     output:
@@ -357,7 +357,7 @@ rule prokka_spad:
         prokka_gbk = config["prokka_spad_gbk"],
     params:
         dir = directory(config["prokka_spad_dir"]),
-        prokka_prefix = file1_pref
+        prokka_prefix = config["prefix"]
     shell:
         """
         prokka \
@@ -375,7 +375,7 @@ rule eggnog_spad:
         config["eggnog_spad_ann"]
     threads: workflow.cores * 0.5
     params:
-        out_pref = file1_pref,
+        out_pref = config["prefix"],
         eggnog = config["eggnog_path"],
         eggnog_dir = directory(config["eggnog_spad_dir"])
     shell:
@@ -580,7 +580,7 @@ rule prokka_uni:
         prokka_faa = config["prokka_uni_faa"]
     params:
         dir = directory(config["prokka_uni_dir"]),
-        prokka_prefix = file1_pref
+        prokka_prefix = config["prefix"]
     shell:
         """
         prokka \
@@ -598,7 +598,7 @@ rule eggnog_uni:
         config["eggnog_uni_ann"]
     threads: workflow.cores * 0.5
     params:
-        out_pref = file1_pref,
+        out_pref = config["prefix"],
         eggnog = config["eggnog_path"],
         eggnog_dir = directory(config["eggnog_uni_dir"])
     shell:
