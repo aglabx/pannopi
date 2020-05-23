@@ -1,0 +1,65 @@
+rule blastn:
+    input:
+        rules.assembly.output.assembly,
+    conda:
+        "envs/blastn.yaml"
+    threads: workflow.cores * 0.5
+    output:
+        blastn_out = config["blastn_out"]
+    params:
+        blast_db = config["blast_db"]
+    shell:
+        """
+        blastn \
+            -query {input} \
+            -db {params.blast_db} \
+            -max_target_seqs 5 \
+            -outfmt 6 \
+            -evalue 1e-5 \
+            -num_threads {threads} \
+            -out {output}
+        """
+
+rule filter:
+    input:
+        rules.blastn.output
+    output:
+        filter_out = config["filter_out"]
+    shell:
+        """
+        less {input} | \
+        sort -k1,1 -k12,12nr -k11,11n | \
+        sort -u -k1,1 --merge > {output}
+        """
+
+rule index:
+    input:
+        rules.assembly.output.assembly,
+    conda:
+        "envs/samtools.yaml"
+    output:
+        index_file = config["index_file"]
+    shell:
+        """
+        samtools faidx {input}
+        """
+
+rule contera:
+    input:
+        scaffold = rules.assembly.output.assembly,
+        index_file = rules.index.output,
+        filter_out = rules.filter.output,
+    output:
+        assembly_filtered = config["assembly_filtered"],
+        report = config["contera_report"]
+    params:
+        contera_path = config["contera_path"],
+        outdir = directory(config["unicon_dir"])
+    shell:
+        """
+        python {params.contera_path} \
+            -s {input.scaffold} \
+            -f {input.index_file} \
+            -b {input.filter_out} \
+            -o {params.outdir}
+        """
