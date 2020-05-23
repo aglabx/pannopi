@@ -1,0 +1,21 @@
+rule annotation:
+    input:
+        contera_out.assembly_filtered
+    conda:
+        "envs/prokka.yaml"
+    threads: workflow.cores * 0.5
+    output:
+        annotation_faa = config["annotation_faa"],
+        annotation_gbk = config["annotation_gbk"],
+    params:
+        dir = directory(config["annotation_dir"]),
+        prokka_prefix = config["prefix"]
+    shell:
+        """
+        prokka \
+            --force \
+            --cpus {threads} \
+            --outdir {params.dir} \
+            --prefix {params.prokka_prefix} \
+            {input}
+        """

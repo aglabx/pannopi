@@ -1,0 +1,14 @@
+rule assembly:
+    input:
+        forward = rules.rmdub.output.rmdub_out_file1,
+        reverse = rules.rmdub.output.rmdub_out_file2
+    conda:
+        "envs/unicycler.yaml"
+    threads: workflow.cores
+    output:
+        assembly = config["assembly"],
+        assembly_gfa = config["assembly_gfa"],
+    params:
+        dir = directory(config["assembly_dir"])
+    shell:
+        "unicycler -1 {input.forward} -2 {input.reverse} -t {threads} -o {params}"

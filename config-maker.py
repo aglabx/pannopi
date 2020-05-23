@@ -16,9 +16,9 @@ def main(settings):
 
     import os
     import os.path
-    
+
     config_file = "config/config.yaml"
-    
+
     prefix = "_".join(os.listdir(settings["work_dir"][0].split("_")[:-1])
     path_to_reads = os.path.abspath(work_dir)
     if assembler == "spades":
@@ -27,8 +27,16 @@ def main(settings):
         assembly_file = "assembly"
     elif assembler == "skesa":
         assembly_file = "??????????????" ##### УЗНАТЬ НАПИСАТЬ ДОПОЛНИТЬ
-                      
-    config = """#PREPARE
+
+    config = """
+    assembler = "rules/{assembler}.sf"
+    annotator = "rules/{annotator}.sf"
+    raw_fastq_1 : "{raw_fastq_1}"
+    raw_fastq_2 : "{raw_fastq_2}"
+    path_to_reads : "{path_to_reads}"
+    prefix : "{prefix}"
+
+    #PREPARE
     trim_out_file_1 :  "{path_to_reads}/trim/{prefix}.trim_1.fastq",
     trim_out_file_2 : "{path_to_reads}/trim/{prefix}.trim_2.fastq",
     rmdub_file_1 : "{path_to_reads}/rmdub/{prefix}.rm_1.fastq",
@@ -69,10 +77,11 @@ def main(settings):
     contera_report : "{path_to_reads}/contera/{prefix}.contera_report.txt",
 
     # ANNOTATION
-    prokka_dir : "{path_to_reads}/prokka/",
-    prokka_faa : "{path_to_reads}/prokka/{prefix}.faa",
+    annotation_dir : "{path_to_reads}/annotation/",
+    annotation_faa : "{path_to_reads}/annotation/{prefix}.faa",
+    annotation_gbk : "{path_to_reads}/annotation/{prefix}.gbk",
 
-    # FUNCTIONAL ANNOTATION    
+    # FUNCTIONAL ANNOTATION
     eggnog_dir : "{path_to_reads}/eggnog/",
     eggnog_ann : "{path_to_reads}/eggnog/{prefix}.emapper.annotations",
     goann_outdir : "{path_to_reads}/goann/",
@@ -89,25 +98,30 @@ def main(settings):
     #RESULT STEP
     results_path : "{path_to_reads}/results/",
     results_file : "{path_to_reads}/results/{prefix}_genes_analysis.txt",
-    """.format(path_to_reads = path_to_reads, prefix = prefix, assembly_file = assembly_file)
-    
+    """.format(path_to_reads = path_to_reads, prefix = prefix,\
+    assembly_file = assembly_file, raw_fastq_1 = raw_fastq_1,\
+    raw_fastq_2 = raw_fastq_2)
+
     with open(config_file, "w") as fw:
     fw.write(config)
 
 
 if __name__ == '__main__':
-    
+
     parser = argparse.ArgumentParser(description='Program description.')
     parser.add_argument('-w','--workdir', help='sample directory', required=True)
     parser.add_argument('-a','--assembler', help='assebler tool: spades, unicycler or skesa', required=True)
+    parser.add_argument('-n','--annotator', help='annotation tool: pgap or prokka', required=True)
     args = vars(parser.parse_args())
-    
+
     work_dir = args["workdir"]
     assembler = args["assembler"]
+    annotator = args["annotator"]
 
     settings = {
         "work_dir": work_dir,
         "assembler": assembler,
+        "annotator" : annotator
     }
 
     main(settings)

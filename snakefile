@@ -2,8 +2,8 @@ configfile: "config/config.yaml"
 
 rule all:
     input:
-        res_spad = settings["results_spad_file"],
-        res_uni = settings["results_uni_file"]
+        res_spad = config["results_spad_file"],
+        res_uni = config["results_uni_file"]
         
 rule tools:
     params:
@@ -15,15 +15,15 @@ rule tools:
         blast_db = "/mnt/projects/shared/ncbi/blast/db/nt", # тоже придумать
         goobo = "tools/goanno/GOanno.py",
         obo_annotation = "tools/goanno/go.obo",
-        
+
 include: "rules/prepare.sf"
-    
-include: config["assembly_tool"]
-    
+
+include: config["assembler"]
+
 include: "rules/cleaning.sf"
-    
-include: "rules/annotation.sf"
-    
+
+include: config["annotator"]
+
 include: "rules/functional_annotation.sf"
-    
+
 include: "rules/qc.sf"
