@@ -2,9 +2,12 @@ configfile: "config/config.yaml"
 
 rule all:
     input:
-        res_spad = config["results_spad_file"],
-        res_uni = config["results_uni_file"]
-        
+        contera_report = config["contera_report"],
+        qc = config["quast_out_file"],
+        scope_file = config["scope_file"],
+        fastq_file_2 = config["fastqc_file2"]
+        fastq_file_1 = config["fastqc_file1"]
+
 rule tools:
     params:
         v2trim = "tools/v2trim/V2_trim.exe",
@@ -22,8 +25,8 @@ include: config["assembler"]
 
 include: "rules/cleaning.sf"
 
-include: config["annotator"]
+#include: config["annotator"]
 
-include: "rules/functional_annotation.sf"
+#include: "rules/functional_annotation.sf"
 
 include: "rules/qc.sf"
