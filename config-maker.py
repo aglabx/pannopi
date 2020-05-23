@@ -9,7 +9,7 @@ import sys
 import argparse
 
 
-def main(settings):
+def main():
     ''' Function description.
     '''
     pass
@@ -19,7 +19,7 @@ def main(settings):
 
     config_file = "config/config.yaml"
 
-    prefix = "_".join(os.listdir(settings["work_dir"][0].split("_")[:-1])
+    prefix = "_".join(os.listdir(work_dir)[0].split("_")[:-1])
     path_to_reads = os.path.abspath(work_dir)
     if assembler == "spades":
         assembly_file = "scaffolds"
@@ -37,6 +37,10 @@ def main(settings):
     prefix : "{prefix}"
 
     #PREPARE
+    trim_in_prefix : "{path_to_reads}/{prefix},
+    trim_out_prefix : "{path_to_reads}/trim/{prefix}",
+    rmdub_in_prefix : "{path_to_reads}/trim/{prefix}.trim",
+    rmdub_out_prefix : "{path_to_reads}/rmdub/{prefix}.rm",
     trim_out_file_1 :  "{path_to_reads}/trim/{prefix}.trim_1.fastq",
     trim_out_file_2 : "{path_to_reads}/trim/{prefix}.trim_2.fastq",
     rmdub_file_1 : "{path_to_reads}/rmdub/{prefix}.rm_1.fastq",
@@ -118,10 +122,4 @@ if __name__ == '__main__':
     assembler = args["assembler"]
     annotator = args["annotator"]
 
-    settings = {
-        "work_dir": work_dir,
-        "assembler": assembler,
-        "annotator" : annotator
-    }
-
-    main(settings)
+    main()
