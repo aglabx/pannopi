@@ -18,48 +18,71 @@ def main():
     import os.path
 
     for i in os.listdir(workdir):
-        if "R1" in i:
-            forward_reads = workdir + "/" + i
-        elif "R2" in i:
-            reverse_reads = workdir + "/" + i
+        if "R1" in i or "_1.fastq" in i:
+            raw_fastq_1 = workdir + "/" + i
+        elif "R2" in i or "_2.fastq" in i:
+            raw_fastq_2 = workdir + "/" + i
 
-    assert os.path.exists(forward_reads)
-    assert os.path.getsize(forward_reads) > 0
+    print("Forvard reads is:", raw_fastq_1)
+    print("Reverse reads is:", raw_fastq_2)
 
-    raw_reads1 = os.path.split(forward_reads)[1]
-    raw_reads2 = os.path.split(reverse_reads)[1]
+    EXECUTE_INDEX_BUILDING = False
 
-    if raw_reads1.endswith(".gz"):
-        command = "gunzip {forward_reads}".format(forward_reads = forward_reads)
+    if raw_fastq_1.endswith(".gz"):
+        command = "gzip -d %s" % (raw_fastq_1)
         print(command)
         os.system(command)
-    if raw_reads2.endswith(".gz"):
-        command = "gunzip {reverse_reads}".format(reverse_reads = reverse_reads)
-        print(command)
-        os.system(command)
-    if "R1" in raw_reads1:
-        forward_reads1 = forward_reads.split("R1")[0] + "1.fastq"
-        command = "mv %s %s" % (forward_reads, forward_reads1)
-        print(command)
-        os.system(command)
-    if "R2" in raw_reads2:
-        reverse_reads2 = reverse_reads.split("R2")[0] + "2.fastq"
-        command = "mv %s %s" % (reverse_reads, reverse_reads2)
+        command = "gzip -d %s" % (raw_fastq_2)
         print(command)
         os.system(command)
 
-    forward_reads = forward_reads1
-    reverse_reads = reverse_reads2
+        raw_fastq_1 = raw_fastq_1.replace(".gz", "")
+        raw_fastq_2 = raw_fastq_2.replace(".gz", "")
 
-    assert forward_reads.endswith("_1.fastq")
-    assert reverse_reads.endswith("_2.fastq")
+    if raw_fastq_1.endswith(".tar.gz"):
+        command = "tar xfvz %s" % (raw_fastq_1)
+        print(command)
+        os.system(command)
+        command = "tar xfvz %s" % (raw_fastq_2)
+        print(command)
+        os.system(command)
+
+        raw_fastq_1 = raw_fastq_1.replace(".tar.gz", "")
+        raw_fastq_2 = raw_fastq_2.replace(".tar.gz", "")
+
+    if raw_fastq_1.endswith(".fq"):
+        new_raw_file_1 = raw_fastq_1.replace(".fq", ".fastq")
+        command = "mv %s %s" % (raw_fastq_1, new_raw_file_1)
+        print(command)
+        os.system(command)
+        new_raw_file_2 = raw_fastq_2.replace(".fq", ".fastq")
+        command = "mv %s %s" % (raw_fastq_2, new_raw_file_2)
+        print(command)
+        os.system(command)
+        raw_fastq_1 = new_raw_file_1
+        raw_fastq_2 = new_raw_file_2
+
+    if "R1" in raw_fastq_1:
+        new_raw_file_1 = raw_fastq_1.split("R1")[0] + "_1.fastq"
+        command = "mv %s %s" % (raw_fastq_1, new_raw_file_1)
+        print(command)
+        os.system(command)
+        new_raw_file_2 = raw_fastq_2.split("R2")[0] + "_2.fastq"
+        command = "mv %s %s" % (raw_fastq_2, new_raw_file_2)
+        print(command)
+        os.system(command)
+        raw_fastq_1 = new_raw_file_1
+        raw_fastq_2 = new_raw_file_2
+
+    assert raw_fastq_1.endswith("_1.fastq")
+    assert raw_fastq_2.endswith("_2.fastq")
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Program description.')
-    parser.add_argument('-w','--workdir', help='working dir with raw reads', required=True)
+    parser.add_argument('-w','--workdir', help='absolute path to working dir with raw reads', required=True)
     args = vars(parser.parse_args())
 
-    work_dir = args["workdir"]
+    workdir = args["workdir"]
 
     main()
