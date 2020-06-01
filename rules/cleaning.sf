@@ -2,7 +2,7 @@ rule blastn:
     input:
         rules.assembly.output.assembly,
     conda:
-        "envs/blastn.yaml"
+        envs.blast
     threads: workflow.cores * 0.5
     output:
         blastn_out = config["blastn_out"]
@@ -36,7 +36,7 @@ rule index:
     input:
         rules.assembly.output.assembly,
     conda:
-        "envs/samtools.yaml"
+        envs.samtools
     output:
         index_file = config["index_file"]
     shell:
@@ -53,8 +53,8 @@ rule contera:
         assembly_filtered = config["assembly_filtered"],
         report = config["contera_report"]
     params:
-        contera_path = config["contera_path"],
-        outdir = directory(config["unicon_dir"])
+        contera_path = tools.contera,
+        outdir = directory(config["contera_dir"])
     shell:
         """
         python {params.contera_path} \

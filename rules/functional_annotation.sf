@@ -1,0 +1,157 @@
+rule eggnog:
+    input:
+        rules.annotation.output
+    output:
+        config["eggnog_ann"]
+    threads: workflow.cores * 0.5
+    params:
+        out_pref = config["prefix"],
+        eggnog = tools.eggnog,
+        eggnog_dir = directory(config["eggnog_dir"])
+    shell:
+        """
+        python2 {params.eggnog} \
+            -i {input} \
+            --output_dir {params.eggnog_dir} \
+            --output {params.out_pref} \
+            -m diamond \
+            --report_orthologs \
+            --cpu {threads} \
+            --resume
+        """
+
+rule megares:
+    input:
+        assembly_filtered = rules.contera.output.assembly_filtered
+    output:
+        megares_report = config["megares"]
+    conda:
+        envs.abricate
+    params:
+        outdir = directory(config["funcan_dir"])
+    shell:
+        "abricate --db megares {input} > {output}"
+
+rule ncbi:
+    input:
+        assembly_filtered = rules.contera.output.assembly_filtered
+    output:
+        ncbi_report = config["ncbi"]
+    conda:
+        envs.abricate
+    params:
+        outdir = directory(config["funcan_dir"])
+    shell:
+        "abricate {input} > {output}"
+
+rule plasmid:
+    input:
+        assembly_filtered = rules.contera.output.assembly_filtered
+    output:
+        plasmids_report = config["plasmids"]
+    conda:
+        envs.abricate
+    params:
+        outdir = directory(config["funcan_dir"])
+    shell:
+        "abricate --db plasmidfinder {input} > {output}"
+
+rule virulence:
+    input:
+        assembly_filtered = rules.contera.output.assembly_filtered
+    output:
+        plasmids_report = config["virulence"]
+    conda:
+        envs.abricate
+    params:
+        outdir = directory(config["funcan_dir"])
+    shell:
+        "abricate --db vfdb {input} > {output}"
+
+rule serotype:
+    input:
+        assembly_filtered = rules.contera.output.assembly_filtered
+    output:
+        plasmids_report = config["serotype"]
+    conda:
+        envs.abricate
+    params:
+        outdir = directory(config["funcan_dir"])
+    shell:
+        "abricate --db ecoh {input} > {output}"
+
+rule funcan_sum:
+    input:
+        megares = rules.megares.output,
+        ncbi = rules.ncbi.output,
+        plasmids = rules.plasmid.output,
+        virulence = rules.virulence.output,
+        serotype = rules.serotype.output,
+    output:
+        whole_report = config["funcan_sum"]
+    conda:
+        envs.abricate
+    params:
+        outdir = directory(config["funcan_dir"])
+    shell:
+        "abricate --summary {input} > {output}"
+
+rule mlst:
+    input:
+        assembly_filtered = rules.contera.output.assembly_filtered
+    output:
+        config["mlst"]
+    conda:
+        "envs/mlst.yaml"
+    shell:
+        """
+        mlst {input} > {output}
+        """
+
+rule goann:
+    input:
+        egg = rules.eggnog.output,
+    output:
+        config["goann_out"]
+    params:
+        obo_annotation = tools.obo_annotation,
+        goobo = tools.goobo,
+        outdir = config["goann_outdir"]
+    shell:
+        """
+        python {params.goobo} -g {params.obo_annotation} -e {input.egg} -o {params.outdir}
+        """
+
+
+##QUALITY CINTROL AND RESULTS#####################################################################################
+# rule reference:
+#     input:
+#         contera = spadconout.report
+#     conda:
+#         "envs/ncbi_download.yaml"
+#     output:
+#         ref_file = config["reference_file"]
+#     params:
+#         ref_dir = directory(config["reference_dir"]),
+#         refdown = "tools/reference_download/refdown.py"
+#     shell:
+#         """
+#         {params.refdown} -c {input} -o {params.ref_dir}
+#         """
+
+rule results:
+    input:
+        contera = rules.contera.output,
+        egg = rules.eggnog.output,
+        scope = rules.genomescope.output,
+        fast1 = rules.fastqc1.output,
+        fast2 = rules.fastqc2.output,
+        quast = rules.quast.output,
+        whole_report = rules.funcan_sum.output,
+        goann = rules.goann.output,
+    output:
+        results_file = config["results_file"],
+    params:
+        path = directory(config["results_path"])
+    shell:
+        "cp {input} {params}"
