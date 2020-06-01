@@ -1,9 +1,9 @@
 rule assembly:
     input:
-        forward = rules.rmdub.output.rmdub_out_file1,
-        reverse = rules.rmdub.output.rmdub_out_file2
+        file1 = rules.rmdub.output.rmdub_out_file1,
+        file2 = rules.rmdub.output.rmdub_out_file2,
     conda:
-        "envs/spades.yaml"
+        envs.spades
     threads: workflow.cores
     output:
         assembly = config["assembly"],
@@ -11,4 +11,4 @@ rule assembly:
     params:
         dir = directory(config["assembly_dir"])
     shell:
-        "spades -1 {input.forward} -2 {input.reverse} -t {threads} -o {params}"
+        "spades -1 {input.file1} -2 {input.file2} -t {threads} -o {params}"

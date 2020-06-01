@@ -5,7 +5,7 @@ rule fastqc1:
         forward_read = config["raw_fastq_1"],
         rewerse_read = config["raw_fastq_2"]
     conda:
-        "envs/fastqc.yaml"
+        envs.fastqc
     output:
         fastq_file_1 = config["fastqc_file1"],
     params:
@@ -23,7 +23,7 @@ rule fastqc2:
         rules.rmdub.output.rmdub_out_file1,
         rules.rmdub.output.rmdub_out_file2
     conda:
-        "envs/fastqc.yaml"
+        envs.fastqc
     output:
         fastq_file_2 = config["fastqc_file2"]
     params:
@@ -42,7 +42,7 @@ rule jellycount:
     input:
         rules.rmdub.output,
     conda:
-        "envs/jellyfish.yaml",
+        envs.jellyfish
     output:
         jellycount_file = config["jellycount_file"],
     shell:
@@ -60,7 +60,7 @@ rule jellyhisto:
     input:
         rules.jellycount.output,
     conda:
-        "envs/jellyfish.yaml",
+        envs.jellyfish
     output:
         jellyhisto_file = config["jellyhisto_file"],
     shell:
@@ -74,7 +74,7 @@ rule genomescope:
     input:
         rules.jellyhisto.output
     conda:
-        "envs/r.yaml"
+        envs.r
     output:
         scope_file = config["scope_file"]
     params:
@@ -87,18 +87,18 @@ rule genomescope:
 
 rule quast:
     input:
-        contera = rules.contera.output,
-        contera_spad = spadconout.scaffolds_filtered,
-        spades = uniout.scaffolds,
-        uni = uniout.assembly,
+        contera = rules.contera.output.assembly_filtered,
+        assembly = rules.assembly.output.assembly
 #         ref = rules.reference.output
     conda:
-        "envs/quast.yaml"
+        envs.quast
     output:
         config["quast_out_file"]
     params:
         directory(config["quast_dir"])
     shell:
         """
-        quast -o {params} {input.contera} {input.contera_spad} {input.spades} {input.uni}
-        ""
+        quast -o {params} \
+        {input.contera} \
+        {input.assembly}
+        """

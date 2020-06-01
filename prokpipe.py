@@ -9,7 +9,7 @@ import sys
 import argparse
 
 
-def main(settings):
+def main():
     ''' Function description.
     '''
     pass
@@ -27,13 +27,17 @@ def main(settings):
 
     for workdir in workdir_list:
         #Reads prepare
-        command = "tools/reads_prepare/reads_prepare.py"
+        command = "python tools/reads_prepare/reads_prepare.py -w %s" % workdir
         os.system(command)
         #Config-maker
-        command = "config-maker.py -w %s -a %s -n %s" % (workdir, assembler, annotator)
+        command = "python config-maker.py -w %s -a %s -n %s" % (workdir, assembler, annotator)
+        print(command)
         os.system(command)
         #Snakemake
-        command = "snakemake --cores %s" % (threads)
+        command = "snakemake --cores %s --use-conda -n" % (threads)
+        print(command)
+        os.system(command)
+        
 
 if __name__ == '__main__':
 
