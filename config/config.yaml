@@ -1,1 +1,76 @@
-# It will be created for every bacteria with config-maker.py 
+
+assembler: "rules/spades.sf"
+annotator: "rules/prokka.sf"
+raw_fastq_1: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/ecoli_dpdpd_1.fastq"
+raw_fastq_2: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/ecoli_dpdpd_2.fastq"
+path_to_reads: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19"
+prefix: "ecoli_dpdpd"
+
+#PREPARE
+trim_in_prefix: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/ecoli_dpdpd"
+trim_out_prefix: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/trim/ecoli_dpdpd"
+rmdub_in_prefix: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/trim/ecoli_dpdpd.trim"
+rmdub_out_prefix: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/rmdub/ecoli_dpdpd.rm"
+trim_out_file_1:  "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/trim/ecoli_dpdpd.trim_1.fastq"
+trim_out_file_2: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/trim/ecoli_dpdpd.trim_2.fastq"
+rmdub_file_1: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/rmdub/ecoli_dpdpd.rm_1.fastq"
+rmdub_file_2: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/rmdub/ecoli_dpdpd.rm_2.fastq"
+
+#FASTQC
+fastqc1_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/fastqc/fastqc_raw"
+fastqc2_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/fastqc/fastqc_clean"
+fastqc_file1: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/fastqc/fastqc_raw/ecoli_dpdpd_1_fastqc.zip"
+fastqc_file2: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/fastqc/fastqc_clean/ecoli_dpdpd.rm_2_fastqc.zip"
+
+#JELLY FILES
+jellycount_file: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/jellyfish/ecoli_dpdpd.jf2"
+jellyhisto_file: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/jellyfish/ecoli_dpdpd.histo"
+scope_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/jellyfish/scope/"
+scope_file: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/jellyfish/scope/plot.png"
+
+#ASSEMBLY
+assembly: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/assembly/scaffolds.fasta"
+assembly_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/assembly"
+assembly_gfa: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/assembly/scaffolds.gfa"
+
+#QUALITY CONTROL
+quast_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/quast"
+quast_out_file: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/quast/report.txt"
+reference_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/reference/"
+reference_file: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/reference/ecoli_dpdpd.fna"
+
+#BLAST
+blastn_out: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/blast/ecoli_dpdpd.outfmt6"
+blast_db: ""
+
+# FILTERING
+filter_out: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/blast/ecoli_dpdpd.best_single_hits.blastn"
+index_file:  "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/assembly.fasta.fai"
+adapters_fasta: "poop"
+assembly_filtered: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/contera/assembly_filtered.fasta"
+contera_dir:  "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/contera/"
+contera_report: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/contera/ecoli_dpdpd.contera_report.txt"
+
+# ANNOTATION
+annotation_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/annotation/"
+annotation_faa: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/annotation/ecoli_dpdpd.faa"
+annotation_gbk: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/annotation/ecoli_dpdpd.gbk"
+
+# FUNCTIONAL ANNOTATION
+eggnog_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/eggnog/"
+eggnog_ann: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/eggnog/ecoli_dpdpd.emapper.annotations"
+goann_outdir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/goann/"
+goann_out: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/goann/ecoli_dpdpd_genes_analysis.txt"
+funcan_dir: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/"
+megares: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/megares_report.txt"
+ncbi: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/ncbi_report.txt"
+virulence: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/virulence_report.txt"
+plasmids: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/plasmids_report.txt"
+serotype: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/serotype_ecoli.txt"
+funcan_sum: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/AMR_and_virulence_report.txt"
+mlst: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/funcan/mlst_type.txt"
+
+#RESULT STEP
+results_path: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/results/"
+results_file: "/home/dzilov/Dropbox/prokariotic_pipeline/data/ecoli19/results/ecoli_dpdpd_genes_analysis.txt"
+    
