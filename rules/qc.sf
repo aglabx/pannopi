@@ -87,7 +87,7 @@ rule genomescope:
 
 rule quast:
     input:
-        contera = rules.contera.output.assembly_filtered,
+        #contera = rules.contera.output.assembly_filtered,
         assembly = rules.assembly.output.assembly
 #         ref = rules.reference.output
     conda:
@@ -99,6 +99,5 @@ rule quast:
     shell:
         """
         quast -o {params} \
-        {input.contera} \
-        {input.assembly}
+        {input}
         """

@@ -11,4 +11,4 @@ rule assembly:
     params:
         dir = directory(config["assembly_dir"])
     shell:
-        "spades -1 {input.file1} -2 {input.file2} -t {threads} -o {params}"
+        "spades.py -1 {input.file1} -2 {input.file2} -t {threads} -o {params}"

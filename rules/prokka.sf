@@ -1,9 +1,9 @@
 rule annotation:
     input:
-        rules.contera.output.assembly_filtered
+        rules.assembly.output.assembly
     conda:
         envs.prokka
-    threads: workflow.cores * 0.5
+    threads: workflow.cores
     output:
         annotation_faa = config["annotation_faa"],
         annotation_gbk = config["annotation_gbk"],

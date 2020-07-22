@@ -1,0 +1,12 @@
+rule pangenome:
+    input:
+        rules.annotation.output.annotation_gbk
+    output:
+        
+    conda:
+       envs.roary
+    threads: workflow.cores
+    shell:
+        """
+        roary
+        """
