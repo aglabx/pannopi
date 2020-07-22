@@ -19,7 +19,9 @@ def main():
 
     config_file = "config/config.yaml"
 
-    prefix = "_".join(os.listdir(work_dir)[0].split("_")[:-1])
+    for i in os.listdir(work_dir):
+        if i.endswith(".fastq"):
+            prefix = "_".join(i.split("_")[:-1])
     path_to_reads = os.path.abspath(work_dir)
     for i in os.listdir(work_dir):
         if i.endswith("_1.fastq"):
@@ -31,6 +33,7 @@ def main():
 
     if assembler == "spades":
         assembly_file = "scaffolds"
+        assembly_gfa = "assembly_graph_with_scaffolds.gfa"
     elif assembler == "unicycler":
         assembly_file = "assembly"
     elif assembler == "skesa":
@@ -46,73 +49,71 @@ prefix: "{prefix}"
 
 #PREPARE
 trim_in_prefix: "{path_to_reads}/{prefix}"
-trim_out_prefix: "{path_to_reads}/trim/{prefix}"
-rmdub_in_prefix: "{path_to_reads}/trim/{prefix}.trim"
-rmdub_out_prefix: "{path_to_reads}/rmdub/{prefix}.rm"
-trim_out_file_1:  "{path_to_reads}/trim/{prefix}.trim_1.fastq"
-trim_out_file_2: "{path_to_reads}/trim/{prefix}.trim_2.fastq"
-rmdub_file_1: "{path_to_reads}/rmdub/{prefix}.rm_1.fastq"
-rmdub_file_2: "{path_to_reads}/rmdub/{prefix}.rm_2.fastq"
+trim_out_prefix: "{path_to_reads}/preparation/trim/{prefix}"
+rmdub_in_prefix: "{path_to_reads}/preparation/trim/{prefix}.trim"
+rmdub_out_prefix: "{path_to_reads}/preparation/rmdub/{prefix}.rm"
+trim_out_file_1:  "{path_to_reads}/preparation/trim/{prefix}.trim_1.fastq"
+trim_out_file_2: "{path_to_reads}/preparation/trim/{prefix}.trim_2.fastq"
+rmdub_file_1: "{path_to_reads}/preparation/rmdub/{prefix}.rm_1.fastq"
+rmdub_file_2: "{path_to_reads}/preparation/rmdub/{prefix}.rm_2.fastq"
 
 #FASTQC
-fastqc1_dir: "{path_to_reads}/fastqc/fastqc_raw"
-fastqc2_dir: "{path_to_reads}/fastqc/fastqc_clean"
-fastqc_file1: "{path_to_reads}/fastqc/fastqc_raw/{prefix}_1_fastqc.zip"
-fastqc_file2: "{path_to_reads}/fastqc/fastqc_clean/{prefix}.rm_2_fastqc.zip"
+fastqc1_dir: "{path_to_reads}/preparation/QC/fastqc/fastqc_raw"
+fastqc2_dir: "{path_to_reads}/preparation/QC/fastqc/fastqc_clean"
+fastqc_file1: "{path_to_reads}/preparation/QC/fastqc/fastqc_raw/{prefix}_1_fastqc.zip"
+fastqc_file2: "{path_to_reads}/preparation/QC/fastqc/fastqc_clean/{prefix}.rm_2_fastqc.zip"
 
 #JELLY FILES
-jellycount_file: "{path_to_reads}/jellyfish/{prefix}.jf2"
-jellyhisto_file: "{path_to_reads}/jellyfish/{prefix}.histo"
-scope_dir: "{path_to_reads}/jellyfish/scope/"
-scope_file: "{path_to_reads}/jellyfish/scope/plot.png"
+jellycount_file: "{path_to_reads}/preparation/QC/jellyfish/{prefix}.jf2"
+jellyhisto_file: "{path_to_reads}/preparation/QC/jellyfish/{prefix}.histo"
+scope_dir: "{path_to_reads}/preparation/QC/jellyfish/scope/"
+scope_file: "{path_to_reads}/preparation/QC/jellyfish/scope/plot.png"
 
 #ASSEMBLY
-assembly: "{path_to_reads}/assembly/{assembly_file}.fasta"
-assembly_dir: "{path_to_reads}/assembly"
-assembly_gfa: "{path_to_reads}/assembly/{assembly_file}.gfa"
+assembly: "{path_to_reads}/genome_assembly/{assembler}/{assembly_file}.fasta"
+assembly_dir: "{path_to_reads}/genome_assembly/{assembler}"
+assembly_gfa: "{path_to_reads}/genome_assembly/{assembler}/{assembly_gfa}"
 
-#QUALITY CONTROL
-quast_dir: "{path_to_reads}/quast"
-quast_out_file: "{path_to_reads}/quast/report.txt"
-reference_dir: "{path_to_reads}/reference/"
+#ASSEMBLY QUALITY CONTROL
+quast_dir: "{path_to_reads}/genome_assembly/QC/quast"
+quast_out_file: "{path_to_reads}/genome_assembly/QC/quast/report.txt"
+reference_dir: "{path_to_reads}/genome_assembly/QC/contera/reference/"
 reference_file: "{path_to_reads}/reference/{prefix}.fna"
 
 #BLAST
-blastn_out: "{path_to_reads}/blast/{prefix}.outfmt6"
-blast_db: ""
+blastn_out: "{path_to_reads}/genome_assembly/QC/blast/{prefix}.outfmt6"
+blast_db: "/mnt/data/ncbi/blast/db/nt"
 
 # FILTERING
-filter_out: "{path_to_reads}/blast/{prefix}.best_single_hits.blastn"
-index_file:  "{path_to_reads}/assembly.fasta.fai"
-adapters_fasta: "poop"
-assembly_filtered: "{path_to_reads}/contera/assembly_filtered.fasta"
+adapters_fasta: "poop" ### найти адаптеры и закинуть в папку
+assembly_filtered: "{path_to_reads}/genome_assembly/QC/contera/assembly_filtered.fasta"
 contera_dir:  "{path_to_reads}/contera/"
-contera_report: "{path_to_reads}/contera/{prefix}.contera_report.txt"
+contera_report: "{path_to_reads}/genome_assembly/QC/contera/{prefix}.contera_report.txt"
 
-# ANNOTATION
-annotation_dir: "{path_to_reads}/annotation/"
-annotation_faa: "{path_to_reads}/annotation/{prefix}.faa"
-annotation_gbk: "{path_to_reads}/annotation/{prefix}.gbk"
+# STRUCTURAL ANNOTATION
+annotation_dir: "{path_to_reads}/struct_annotation/{annotator}/"
+annotation_faa: "{path_to_reads}/struct_annotation/{annotator}/{prefix}.faa"
+annotation_gbk: "{path_to_reads}/struct_annotation/{annotator}/{prefix}.gbk"
 
 # FUNCTIONAL ANNOTATION
-eggnog_dir: "{path_to_reads}/eggnog/"
-eggnog_ann: "{path_to_reads}/eggnog/{prefix}.emapper.annotations"
-goann_outdir: "{path_to_reads}/goann/"
-goann_out: "{path_to_reads}/goann/{prefix}_genes_analysis.txt"
-funcan_dir: "{path_to_reads}/funcan/"
-megares: "{path_to_reads}/funcan/megares_report.txt"
-ncbi: "{path_to_reads}/funcan/ncbi_report.txt"
-virulence: "{path_to_reads}/funcan/virulence_report.txt"
-plasmids: "{path_to_reads}/funcan/plasmids_report.txt"
-serotype: "{path_to_reads}/funcan/serotype_ecoli.txt"
-funcan_sum: "{path_to_reads}/funcan/AMR_and_virulence_report.txt"
-mlst: "{path_to_reads}/funcan/mlst_type.txt"
+eggnog_dir: "{path_to_reads}/func_annotation/eggnog"
+eggnog_ann: "{path_to_reads}/func_annotation/eggnog/{prefix}.emapper.annotations"
+goann_outdir: "{path_to_reads}/func_annotation/goann/"
+goann_out: "{path_to_reads}/func_annotation/goann/{prefix}_genes_analysis.txt"
+funcan_dir: "{path_to_reads}/func_annotation/"
+megares: "{path_to_reads}/func_annotation/megares_report.txt"
+ncbi: "{path_to_reads}/func_annotation/ncbi_report.txt"
+virulence: "{path_to_reads}/func_annotation/virulence_report.txt"
+plasmids: "{path_to_reads}/func_annotation/plasmids_report.txt"
+serotype: "{path_to_reads}/func_annotation/serotype_ecoli.txt"
+funcan_sum: "{path_to_reads}/func_annotation/AMR_and_virulence_report.txt"
+mlst: "{path_to_reads}/func_annotation/mlst_type.txt"
 
 #RESULT STEP
 results_path: "{path_to_reads}/results/"
 results_file: "{path_to_reads}/results/{prefix}_genes_analysis.txt"
     """.format(path_to_reads = path_to_reads, prefix = prefix,\
-    assembly_file = assembly_file, assembler = assembler, annotator = annotator, raw_fastq_1 = raw_fastq_1,\
+    assembly_file = assembly_file, assembly_gfa = assembly_gfa, assembler = assembler, annotator = annotator, raw_fastq_1 = raw_fastq_1,\
     raw_fastq_2 = raw_fastq_2)
 
     with open(config_file, "w") as fw:
