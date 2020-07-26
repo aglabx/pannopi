@@ -3,7 +3,7 @@ rule eggnog:
         rules.annotation.output.annotation_faa
     output:
         config["eggnog_ann"]
-    threads: workflow.cores * 0.5
+    threads: workflow.cores
     params:
         out_pref = config["prefix"],
         eggnog = tools.eggnog,
@@ -22,7 +22,7 @@ rule eggnog:
 
 rule megares:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output.assembly_filtered
     output:
         megares_report = config["megares"]
     conda:
@@ -34,7 +34,7 @@ rule megares:
 
 rule ncbi:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output.assembly_filtered
     output:
         ncbi_report = config["ncbi"]
     conda:
@@ -46,7 +46,7 @@ rule ncbi:
 
 rule plasmid:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output.assembly_filtered
     output:
         plasmids_report = config["plasmids"]
     conda:
@@ -58,7 +58,7 @@ rule plasmid:
 
 rule virulence:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output.assembly_filtered
     output:
         plasmids_report = config["virulence"]
     conda:
@@ -70,7 +70,7 @@ rule virulence:
 
 rule serotype:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output.assembly_filtered
     output:
         plasmids_report = config["serotype"]
     conda:
@@ -98,7 +98,7 @@ rule funcan_sum:
 
 rule mlst:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output.assembly_filtered
     output:
         config["mlst"]
     conda:
@@ -141,7 +141,7 @@ rule goann:
 
 rule results:
     input:
-        #contera = rules.contera.output,
+        assembly_filtered = rules.contera.output,
         egg = rules.eggnog.output,
         scope = rules.genomescope.output,
         fast1 = rules.fastqc1.output,

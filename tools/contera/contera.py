@@ -7,70 +7,154 @@
 
 import sys
 import argparse
-import pymongo
 import os
 import os.path
+from collections import Counter
 
 
 def main():
     ''' Function description.
     '''
-    
-    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    ncbi = myclient["NCBI"]
-    refids = ncbi.refids
-    taxids = ncbi.taxids
-    
-    cont_to_len = {}
-    with open(bact_fai) as fh:
-        for line in fh:
-            a = line.strip().split("\t")
-            cont_to_len[a[0]] = int(a[1])
-            
-    cont_to_blast = {}
-    with open(blast_file) as fh:
-        for line in fh:
-            a = line.strip().split("\t")
-            cont_to_blast[a[0]] = a[1]
-    
-    from collections import Counter
-    count_names = Counter()
-    count_id = Counter()
+    # ПЕРВАЯ СТАДИЯ, ЧИТАЕМ БЛАСТ, НАХОДИМ ДЛИНУ УЧАСТКОВ ПО БАКТЕРИЯМ И ТАКСОНАМ
+
+    bact_taxid = {}
+    contigs = {} # ЗАПИСАВАЕМ КОНТИГИ В СЛОВАРЬ, ДАЛЬШЕ ЕГО ИСПОЛЬЗУЕМ ДЛЯ ПОИСКА КОНТАМИНАЦИЙ
+
+    vectors = []
+    phages = []
+
+    bact_length = Counter()
+    taxid_length = Counter()
     total_length = 0
-    not_bacteria_node = []
-    unnown_id = []
-    with open(contera_log, "w") as fw:
-        fw.write("UNNOWN ID'S: \n")
-        for key, value in cont_to_blast.items():
-            length = cont_to_len[key]
-            val_split = value.split('.')[0]
-            taxon_id = refids.find_one({"accession":val_split})
-            if taxon_id == None:
-                fw.write(key + " : " + val_split + "\n")
-            else:
-                taxon_id = taxon_id["taxid"]
-                taxon_name = taxids.find_one({"_id":taxon_id})["name"]
-                taxon_name = " ".join(taxon_name.split()[:2])
-                count_names[taxon_name] += length
-                count_id[taxon_id] += length
-                total_length += length
-                if taxon_name != count_names.most_common()[0][0]:
-                    not_bacteria_node.append(key)
-         
-    bact_report = []
-    for taxon, size in count_names.most_common(100):
-        bact_report.append(taxon + " " + "%s%%" % round(100.*size/total_length, 2))
-    print("\n", bact_report, "\n")
-        
+
+    bact_seq = {}
+    with open(blastn_taxid_out) as fh:
+        for line in fh:
+            line = line.strip().split("\t")
+            #Column names
+            contig = line[0]
+            contigs[contig] = []
+            ident = float(line[2])
+            start = line[3]
+            end = line[4]
+            length = int(line[5])
+            bact_full_name = line[7]
+            bacteria = " ".join(line[7].split(" ")[:2])
+            taxid = line[8]
+
+            if "vector" in bact_full_name or "Vector" in bact_full_name:
+                vectors.append(line)
+            if "phage" in bact_full_name or "Phage" in bact_full_name:
+                phages.append(line)
+
+            bact_length[bacteria] += length
+            taxid_length[taxid] += length
+            total_length += length
+
+            bact_seq[bacteria] = contig + ":" + start + ".." + end
+            
+    # ШАГ 2. НАХОДИМ НАЗВАНИЕ НАШЕЙ БАКТЕРИИ И ЕЕ ТАКСОН 
+
+    target_bact_seq = {}
+    bact_perc = Counter()
+    for bact, length in bact_length.most_common():
+        bact_perc[bact] = length/total_length * 100
+
+    target_bact_sciname = bact_perc.most_common(1)[0][0]
+
+    print("\nBACTERIAL CONTENT IS:", bact_perc.most_common(5))
+    print("\nMOST COMMON TAXON id IS:", taxid_length.most_common(5))
+
     bacteria_id = []
-    for i in count_id.most_common()[:3]:
+    for i in taxid_length.most_common()[:3]:
         bacteria_id.append(str(i[0]) + " = " + str(i[1]/total_length * 100) + "%")
-    print("THE MOST COMMON ID IS : " + ", ".join(bacteria_id))
+
+    # ШАГ 3. ЗАПИСЫВАЕМ КОНТАМИНАЦИИ В СЛОВАРЬ
+
+    for node, position in contigs.items():
+        with open(blastn_taxid_out) as fh:
+            for line in fh:
+                line = line.strip().split("\t")
+
+                #column names
+                contig = line[0]
+                ident = float(line[2])
+                start = line[3]
+                end = line[4]
+                bacteria = " ".join(line[7].split(" ")[:2])
+
+                if contig == node and bacteria != target_bact_sciname and ident > 80:
+                    if start + ":" + end + ":" + bacteria in position:
+                        continue
+                    else:
+                        position.append(start + ":" + end + ":" + bacteria)
+                    break
+            fh.close()
+           
+      #ФИЛЬТРУЕМ НАЙДЕННЫЕ КОНТАМИНАЦИИ, ВЛОЖЕННЫЕ УДЛИННЯЕМ
+    delete_seq = {}
+
+    for node, position in contigs.items():
+        if position:
+            position.sort(key=lambda x : (int(x.split(":")[0]), -1 * int(x.split(":")[1])))
+            delete_seq[node] = []
+
+            i = 1
+            ps,pe = map(int, position[0].split(":")[:2])
+            bac = position[i-1].split(":")[2]
+            while i < len(position):
+                bac = position[i-1].split(":")[2]
+                s,e = map(int, position[i].split(":")[:2])
+                if pe + 1 < s:
+                    delete_seq[node].append((ps, pe, bac))
+                    ps, pe = s, e
+                    i += 1
+                    continue
+
+                pe = max(e, pe)
+                i += 1
+            delete_seq[node].append((ps, pe, bac))
+
+    # ШАГ 4, УДАЛЯЕМ АДАПТЕРЫ И ПОСЛЕ ЭТОГО КОНТИГИ ДЛИНОЙ МЕНЬШЕ 200 БП
+
+    # БЛАСТИМ ГЕНОМ НА АДАПТЕРЫ
+
+    if not os.path.exists(adapters_report):
+        os.system("touch %s" % adapters_report)
     
-    print("NODES TO BE ERASED:", not_bacteria_node, "\n")
+    command = """
+    blastn -query %s \
+                        -db %s \
+                        -outfmt 6 \
+                        -max_target_seqs 1000 \
+                        -task blastn \
+                        -reward 1 \
+                        -penalty \
+                        -5 \
+                        -gapopen 3 \
+                        -gapextend 3 \
+                        -dust yes \
+                        -soft_masking true \
+                        -evalue 0.00001 \
+                        -searchsp 1750000000000 \
+                        -out %s
+              """ % (scaffold, adapters_db, adapters_report)
     
-    print(len(not_bacteria_node), "NODES WILL BE ERASED!", "\n")
-        
+    print(command)
+    os.system(command)
+    
+    adapters_to_del = {}
+    with open(adapters_report) as fh:
+        for line in fh:
+            line = line.strip().split()
+            ids = line[1].split(":")[1]
+            contig = line[0]
+            start = line[6]
+            stop = line[7]
+            adapters_to_del[contig] = start + ":" + stop
+    
+    print("\n" + str(len(adapters_to_del)) + " ADAPTERS WERE FOUND! DELETING...")
+
     fasta = {}
     header = None
     with open(scaffold) as fh:
@@ -85,73 +169,73 @@ def main():
                 seq.append(line)
     if header:
         fasta[header] = "".join(seq)
-        
-    real_node = []
-    for i in not_bacteria_node:
-        for key in fasta.keys():
-            if key.startswith(">" + i):
-                real_node.append(key)
     
-    for i in real_node:
-        if i in fasta.keys():
-            fasta.pop(i)
-        
+    for contig, position in adapters_to_del.items():
+        start = int(position.split(":")[0])-1
+        stop = int(position.split(":")[1])
+        for key, value in fasta.items():
+            if key.startswith(">" + contig):
+                line_to_del = value[start:stop]
+                value = value.replace(line_to_del, "")
+                fasta[key] = value
+    
     short_contig = []
     for key, value in fasta.items():
         if len(value) < 200:
             short_contig.append(key)
-            
+
     for i in short_contig:
         if i in fasta.keys():
             fasta.pop(i)
-            
+       
     with open(scaffolds_filtered, "w") as fw:
         for key, value in fasta.items():
             fw.write(key + "\n" + value + "\n")
     fw.close()
     
-    command = "makeblastdb -in %s -dbtype nucl -parse_seqids" % adapters
-    check_file = os.path.exists(settings["fastqc_file"])
-    if check_file == True:
-        if os.path.getsize(settings["fastqc_file"]) > 0:
-            print("U've already done FASTQC")
-            pass
-        else:
-            print(command)
-            os.system(command)
-    else:
-        print(command)
-        os.system(command)
-    
-    with open(contera_report, "w") as fw:
-        fw.write("BACTERIAL CONTENT OF READS IS:\n" + ", ".join(bact_report) + "\n\n")
-        fw.write("THE MOST COMMON ID IS:\n" + "Taxon IDs: " + ", ".join(bacteria_id) + "\n\n")
-        fw.write("NODES TO BE ERASED:\n" + ", ".join(not_bacteria_node) + "\n\n")
-        fw.write(str(len(not_bacteria_node)) + " NODES WERE ERASED!\n\n")
-        fw.write("Scaffolds without contamination lays in " + scaffold.replace(".fasta", "_filtered.fasta"))
-    fw.close()
+    with open(contera_report, 'w') as fw:
+        fw.write("BACTERIAL CONTENT OF ASSEMBLY IS:\n")
+        for i in bact_perc.most_common(5):
+            bact = str(i[0])
+            perc = str(i[1])
+            fw.write(bact + " - " + perc +"%\n")
+
+        fw.write("\nTHE MOST COMMON ID IS :\n" + ", ".join(bacteria_id) + "\n\n")
+
+        fw.write("FOREIGN BACTERIA SITES:\n")
+        for node, position in delete_seq.items():
+            fw.write(node + "\t")
+            for i in position:
+                start_to_stop = ":".join(str(number) for number in i[:2])
+                bacteria = i[2]
+                fw.write(start_to_stop + "\t" + bacteria + "\n")
+
+        fw.write("\n" + str(len(adapters_to_del)) + " ADAPTERS WERE REMOVED IN:\n")
+        for node, position in adapters_to_del.items():
+            fw.write(node + "\t" + position + "\n")
+
+        fw.close()
+        
+        print("\nCOMPLETED SUCCESSFULLY!\n\nRESULTS FILE LAYS IN " + contera_report)
 
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='Bacterial genome contamination erasing tool')
     parser.add_argument('-s','--scaffold', help='whole path to scaffold_file', required=True)
-    parser.add_argument('-f','--fai', help='whole path to fai_file', required=True)
-    parser.add_argument('-b','--blastn', help='whole path to best_single_hits.blastn', required=True)
+    parser.add_argument('-b','--blastn', help='whole path to outfmt6 file', required=True)
     parser.add_argument('-a','--adapters', help='whole path to adapters database in fasta format', required=True)
     parser.add_argument('-o','--output', help='output_path', required=True)
     args = vars(parser.parse_args())
     
-    scaffold = args["scaffold"]
-    bact_fai = args["fai"]
-    blast_file = args["blastn"]
-    adapters = args["adapters"]
-    output = args["output"]
+    scaffold = os.path.abspath(args["scaffold"])
+    blastn_taxid_out = os.path.abspath(args["blastn"])
+    adapters_db = os.path.abspath(args["adapters"])
+    output = os.path.abspath(args["output"]) + "/"
     scaforarg = scaffold.split("/")[-1].split(".")[0]
-    prefix = blast_file.split("/")[-1].split(".")[0]
+    prefix = blastn_taxid_out.split("/")[-1].split(".")[0]
     
     scaffolds_filtered = output + scaforarg + "_filtered.fasta"
     contera_report = output + prefix + ".contera_report.txt"
-    contera_log = output + prefix + ".contera.log"
     adapters_report = output + prefix + ".adapters_report.outfmt6"
     
     main()

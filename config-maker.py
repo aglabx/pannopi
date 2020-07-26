@@ -82,13 +82,14 @@ reference_file: "{path_to_reads}/reference/{prefix}.fna"
 
 #BLAST
 blastn_out: "{path_to_reads}/genome_assembly/QC/blast/{prefix}.outfmt6"
-blast_db: "/mnt/data/ncbi/blast/db/nt"
+blast_db: "nt"
 
 # FILTERING
-adapters_fasta: "poop" ### найти адаптеры и закинуть в папку
-assembly_filtered: "{path_to_reads}/genome_assembly/QC/contera/assembly_filtered.fasta"
-contera_dir:  "{path_to_reads}/contera/"
+adapters_fasta: "tools/contera/adapters_db/adaptor_fasta.fna"
+assembly_filtered: "{path_to_reads}/genome_assembly/QC/contera/scaffolds_filtered.fasta"
+contera_dir:  "{path_to_reads}/genome_assembly/QC/contera/"
 contera_report: "{path_to_reads}/genome_assembly/QC/contera/{prefix}.contera_report.txt"
+adapters_report: "{path_to_reads}/genome_assembly/QC/contera/{prefix}.adapters_report.outfmt6"
 
 # STRUCTURAL ANNOTATION
 annotation_dir: "{path_to_reads}/struct_annotation/{annotator}/"

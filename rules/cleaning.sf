@@ -20,22 +20,23 @@ rule blastn:
             -out {output}
         """
 
-#rule contera:
-#    input:
- #       scaffold = rules.assembly.output.assembly,
-  #      index_file = rules.index.output,
-   #     filter_out = rules.filter.output,
-    #output:
-     #   assembly_filtered = config["assembly_filtered"],
-      #  report = config["contera_report"]
-    #params:
-     #   contera_path = tools.contera,
-      #  outdir = directory(config["contera_dir"])
-    #shell:
-     #   """
-      #  python {params.contera_path} \
-       #     -s {input.scaffold} \
-        #    -f {input.index_file} \
-         #   -b {input.filter_out} \
-          #  -o {params.outdir}
-        #"""
+rule contera:
+    input:
+        scaffold = rules.assembly.output.assembly,
+        blast_in = rules.blastn.output
+    output:
+        assembly_filtered = config["assembly_filtered"],
+        adapters_report = config["adapters_report"],
+        report = config["contera_report"]
+    params:
+        contera_path = tools.contera,
+        outdir = directory(config["contera_dir"]),
+        adapters = tools.contera.replace("contera.py", "adapters_db/adaptor_fasta.fna")
+    shell:
+        """
+        {params.contera_path} \
+            -s {input.scaffold} \
+            -b {input.blast_in} \
+            -a {params.adapters} \
+            -o {params.outdir}
+        """
