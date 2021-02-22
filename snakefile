@@ -10,7 +10,7 @@ rule tools:
         ill_ext = "tools/v2trim/illumina_ext.data",
         rmdub = "tools/rmdub/rmdup.exe",
         contera = "tools/contera/contera.py",
-        eggnog = "/mnt/projects/pasteur_bacterias/eggnog-mapper-1.0.3/emapper.py", # придумать как ставить еггног
+        eggnog = "/media/eternus1/projects/zilov/soft/eggnog-mapper-2.0.4-rf1/emapper.py", # придумать как ставить еггног
         blast_db = "/mnt/projects/shared/ncbi/blast/db/nt", # тоже придумать
         goobo = "tools/goanno/GOanno.py",
         obo_annotation = "tools/goanno/go.obo",

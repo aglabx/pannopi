@@ -78,7 +78,7 @@ rule genomescope:
     output:
         scope_file = config["scope_file"]
     params:
-        scope = "tools/genomescope/genomescope.R",
+        scope = tools.genomescope,
         scope_dir = directory(config["scope_dir"])
     shell:
         """
