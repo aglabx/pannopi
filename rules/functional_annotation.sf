@@ -10,7 +10,7 @@ rule eggnog:
         eggnog_dir = directory(config["eggnog_dir"])
     shell:
         """
-        python2 {params.eggnog} \
+        {params.eggnog} \
             -i {input} \
             --output_dir {params.eggnog_dir} \
             --output {params.out_pref} \
