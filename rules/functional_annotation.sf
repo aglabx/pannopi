@@ -6,11 +6,13 @@ rule eggnog:
     threads: workflow.cores
     params:
         out_pref = config["prefix"],
+        db = tools.eggnog_db,
         eggnog = tools.eggnog,
         eggnog_dir = directory(config["eggnog_dir"])
     shell:
         """
         {params.eggnog} \
+            --data_dir {params.db} \
             -i {input} \
             --output_dir {params.eggnog_dir} \
             --output {params.out_pref} \

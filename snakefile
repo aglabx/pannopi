@@ -11,9 +11,11 @@ rule tools:
         rmdub = "tools/rmdub/rmdup.exe",
         contera = "tools/contera/contera.py",
         eggnog = "/media/eternus1/projects/zilov/soft/eggnog-mapper-2.0.4-rf1/emapper.py", # придумать как ставить еггног
+        eggnog_db = "/mnt/projects/zilov/soft/eggnog-mapper-2.0.4-rf1/database",
         blast_db = "/mnt/projects/shared/ncbi/blast/db/nt", # тоже придумать
         goobo = "tools/goanno/GOanno.py",
         obo_annotation = "tools/goanno/go.obo",
+        genomescope = "tools/genomescope/genomescope.R"
 
 tools = rules.tools.params
 
