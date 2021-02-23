@@ -16,6 +16,7 @@ rule blastn:
             -max_target_seqs 5 \
             -outfmt '6 qseqid sseqid pident qstart qend length evalue sscinames staxids' \
             -evalue 1e-5 \
+            -perc_identity 90 \
             -num_threads {threads} \
             -out {output}
         """
