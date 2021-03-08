@@ -1,6 +1,6 @@
 rule annotation:
     input:
-        rules.contera.output.assembly_filtered
+        rules.assembly.output.assembly
     conda:
         envs.prokka
     threads: workflow.cores
@@ -17,5 +17,5 @@ rule annotation:
             --cpus {threads} \
             --outdir {params.dir} \
             --prefix {params.prokka_prefix} \
-            {input}
+            --centre X --compliant {input}
         """
