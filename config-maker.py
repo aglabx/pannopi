@@ -113,13 +113,13 @@ results_path: "{outdir}/results/"
             
     
     if mode == "short":
-        unicycler_rule = os.path.join(execution_folder,"rules/unicycler_short.smk")
+        unicycler_rule = os.path.join(execution_folder,"rules/assembly_rules/unicycler_short.smk")
         config = config_parameters + config_short + config_universal
     elif mode == "long":
-        unicucler_rule = os.path.join(execution_folder,"rules/unicycler_long.smk")
+        unicucler_rule = os.path.join(execution_folder,"rules/assembly_rules/unicycler_long.smk")
         config = config_parameters + config_long + config_universal
     elif mode == "hybrid":
-        unicycler_rule = os.path.join(execution_folder,"rules/unicycler_hybrid.smk") 
+        unicycler_rule = os.path.join(execution_folder,"rules/assembly_rules/unicycler_hybrid.smk") 
         config = config_parameters + config_short + config_long + config_universal
     
     unicycler_config = f"unicycler_rule: {unicycler_rule}"
