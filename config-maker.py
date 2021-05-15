@@ -19,6 +19,7 @@ def main(forward_read, reverse_read, long_read, prefix, outdir, mode):
     
     config_parameters = f"""
 # MAIN PARAMETERS
+mode: "{mode}"
 
 # databases
 eggnog_db: "/mnt/projects/databases/eggnog_db/"
@@ -113,7 +114,7 @@ results_path: "{outdir}/results/"
     
     if mode == "short":
         unicycler_rule = os.path.join(execution_folder,"rules/unicycler_short.smk")
-        config = config_paremeters + config_short + config_universal
+        config = config_parameters + config_short + config_universal
     elif mode == "long":
         unicucler_rule = os.path.join(execution_folder,"rules/unicycler_long.smk")
         config = config_parameters + config_long + config_universal
@@ -121,6 +122,8 @@ results_path: "{outdir}/results/"
         unicycler_rule = os.path.join(execution_folder,"rules/unicycler_hybrid.smk") 
         config = config_parameters + config_short + config_long + config_universal
     
+    unicycler_config = f"unicycler_rule: {unicycler_rule}"
+    config += unicycler_config
     
     with open(config_file, "w") as fw:
         fw.write(config)
