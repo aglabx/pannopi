@@ -59,19 +59,21 @@ if __name__ == '__main__':
     parser.add_argument('-1','--forward_reads', help="path to forward short read file in FASTQ format", default="0")
     parser.add_argument('-2','--reverse_reads', help="path to reverse short read file in FASTQ format", default="0")
     parser.add_argument('-l','--long_reads', help="path to long read file in FASTQ format", default="0")
+    parser.add_argument('-p','--prefix', help="prefix for output files", default="0")
     parser.add_argument('-o','--outdir', help='output directory', required=True)
     parser.add_argument('-t','--threads', help='number of threads [default == 8]', default = "8")
     parser.add_argument('-d','--debug', help='debug mode', action='store_true')
     args = vars(parser.parse_args())
 
     reference_fasta = args["reference"]
-    threads = args["threads"]
-    debug = args["debug"]
-    mode = args["mode"]
     forward_read = args["forward_reads"]
     reverse_read = args["reverse_reads"]
     long_read = args["long_reads"]
+    prefix = args["prefix"]
     outdir = os.path.abspath(args["outdir"])
+    threads = args["threads"]
+    debug = args["debug"]
+    mode = args["mode"]
     
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
         
@@ -108,4 +110,12 @@ if __name__ == '__main__':
         reference_fasta = os.path.abspath(reference_fasta)
     else:
         reference_fasta = False
-    main(reference_fasta, forward_read, reverse_read, long_read, outdir, threads, mode, execution_folder, debug)
+    
+    if prefix == "0":
+        if forward_read != "0":
+            prefix = os.path.basename(forward_read).split(".")[0].split("_")[0]
+        elif long_read != "0":
+            prefix = os.path.basename(long_read).split(".")[0]
+        
+        
+    main(reference_fasta, forward_read, reverse_read, long_read, prefix, outdir, threads, mode, execution_folder, debug)
