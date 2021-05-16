@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#@created: <data>
-#@author: <name>
-#@contact: <email>
+# @created: <data>
+# @author: <name>
+# @contact: <email>
 
 import argparse
 import os
@@ -11,44 +11,42 @@ import os.path
 from inspect import getsourcefile
 
 
-def main():
-    ''' Function description.
-    '''
-    pass
+def config_short(forward_read, reverse_read, reference_fasta, prefix, outdir, mode, execution_folder):
+    #Config-maker run
+    command = f"{execution_folder}/config-maker.py -1 {forward_read} -2 {reverse_read} " \
+              f"-r {reference_fasta} -p {prefix} -o {outdir} -m {mode}"
+    print(command)
+    os.system(command)
 
 
-    
-    if test:
-        workdir = "test_data/"
-    else:
-        workdir = "data/"
-        
+def config_long(long_read,reference_fasta, prefix, outdir, mode, execution_folder):
+    #Config-maker run
+    command = f"{execution_folder}/config-maker.py -l {long_read} " \
+              f"-r {reference_fasta} -p {prefix} -o {outdir} -m {mode}"
+    print(command)
+    os.system(command)
+
+
+def config_hybrid(forward_read, reverse_read, long_read,reference_fasta, prefix, outdir, mode, execution_folder):
+    #Config-maker run
+    command = f"{execution_folder}/config-maker.py -1 {forward_read} -2 {reverse_read} " \
+              f"-l {long_read} -r {reference_fasta} -p {prefix} -o {outdir} -m {mode}"
+    print(command)
+    os.system(command)
+
+
+def snakerun(snakefile, threads, execution_folder, debug):
+
     if debug:
         snake_debug = "-n"
     else:
         snake_debug = ""
 
-    workdir_list = []
-    for i in os.listdir(workdir):
-        if i.startswith("."):
-            continue
-        else:
-            if os.path.isdir(workdir + i) == True:
-                workdir_list.append(os.path.abspath(workdir + i))
+    command = f"snakemake --snakefile {snakefile} --configfile {execution_folder}/config/config.yaml " \
+    f"--cores {threads} --use-conda --conda-frontend mamba {snake_debug}"
+    print(command)
+    os.system(command)
 
-    for workdir in workdir_list:
-        #Reads prepare
-        command = "python tools/reads_prepare/reads_prepare.py -w %s" % workdir
-        os.system(command)
-        #Config-maker
-        command = "python config-maker.py -w %s -a %s -n %s" % (workdir, assembler, annotator)
-        print(command)
-        os.system(command)
-        #Snakemake
-        command = "snakemake --cores %s --use-conda %s" % (cpus, snake_debug)
-        print(command)
-        os.system(command)
-        
 
 if __name__ == '__main__':
 
@@ -76,9 +74,19 @@ if __name__ == '__main__':
     mode = args["mode"]
     
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
+
+    if reference_fasta != "0":
+        reference_fasta = os.path.abspath(reference_fasta)
+    else:
+        reference_fasta = False
+
+    if prefix == "0":
+        if forward_read != "0":
+            prefix = os.path.basename(forward_read).split(".")[0].split("_")[0]
+        elif long_read != "0":
+            prefix = os.path.basename(long_read).split(".")[0]
         
-        
-    # Check that all files required for each mode are in    
+    # Check that all files required for each mode are in and run pipeline
     if mode == "short":
         if forward_read == "0" or reverse_read == "0":
             parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read}!")
@@ -87,6 +95,8 @@ if __name__ == '__main__':
         else:
             forward_read = os.path.abspath(forward_read)
             reverse_read = os.path.abspath(reverse_read)
+            snakefile = os.path.join(execution_folder, "workflows/short_mode.snakefile")
+            config_short(forward_read, reverse_read, reference_fasta, prefix, outdir, mode, execution_folder)
             
     elif mode == "long":
         if long_read == "0":
@@ -95,25 +105,17 @@ if __name__ == '__main__':
             parser.error("\nLong-reads mode requires -l {path_to_long_reads.fq} only!\nTo analyse short-reads use short-reads mode or hybrid mode")
         else:
             long_read = os.path.abspath(long_read)
+            snakefile = os.path.join(execution_folder, "workflows/long_mode.snakefile")
+            config_long(long_read, reference_fasta, prefix, outdir, mode, execution_folder)
             
     elif mode == "hybrid":
         if forward_read == "0" or reverse_read == "0" or long_read == "0":
             parser.error("\nHybrid mode requires -1 {path_to_forward_read} AND -2 {path_to_reverse_read} AND -l {path_to_long_reads.fq}!")
         else:
-            long_read = os.path.abspath(faa_file)
-            forward_read = os.path.abspath(forward_rna_read)
-            reverse_read = os.path.abspath(reverse_rna_read)
-            
-    if reference_fasta != "0":
-        reference_fasta = os.path.abspath(reference_fasta)
-    else:
-        reference_fasta = False
-    
-    if prefix == "0":
-        if forward_read != "0":
-            prefix = os.path.basename(forward_read).split(".")[0].split("_")[0]
-        elif long_read != "0":
-            prefix = os.path.basename(long_read).split(".")[0]
-        
-        
-    main(reference_fasta, forward_read, reverse_read, long_read, prefix, outdir, threads, mode, execution_folder, debug)
+            long_read = os.path.abspath(long_read)
+            forward_read = os.path.abspath(forward_read)
+            reverse_read = os.path.abspath(reverse_read)
+            snakefile = os.path.join(execution_folder, "workflows/short_mode.snakefile")
+            config_hybrid(forward_read, reverse_read, long_read,reference_fasta, prefix, outdir, mode, execution_folder)
+
+snakerun(snakefile, threads, execution_folder, debug)
