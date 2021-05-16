@@ -1,4 +1,4 @@
-rule trimming:
+rule v2trim:
     input:
         v2trim_in_forward = config["v2trim_in_file1"] ,
         v2trim_in_reverse = config["v2trim_in_file2"],
