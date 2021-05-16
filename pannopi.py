@@ -55,7 +55,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Pannopi - a tool for prokariotic genome assembly and annotation.')
     parser.add_argument('-m','--mode', help="mode to use [default = short]", 
                         choices=["short", "long", "hybrid"], default="short")
-    parser.add_argument('-r','--reference', help="path to reference asssembly in FASTA format", required=False. default="0")
+    parser.add_argument('-r','--reference', help="path to reference asssembly in FASTA format", required=False, default="0")
     parser.add_argument('-1','--forward_reads', help="path to forward short read file in FASTQ format", default="0")
     parser.add_argument('-2','--reverse_reads', help="path to reverse short read file in FASTQ format", default="0")
     parser.add_argument('-l','--long_reads', help="path to long read file in FASTQ format", default="0")
@@ -83,8 +83,7 @@ if __name__ == '__main__':
         if forward_read == "0" or reverse_read == "0":
             parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read}!")
         elif long_read != "0":
-            parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read} only!\
-             To analyse long-reads use long-reads mode or hybrid mode")
+            parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read} only!\nTo analyse long-reads use long-reads mode or hybrid mode")
         else:
             forward_read = os.path.abspath(forward_read)
             reverse_read = os.path.abspath(reverse_read)
@@ -93,18 +92,17 @@ if __name__ == '__main__':
         if long_read == "0":
             parser.error("\nLong-read mode requires -l {path_to_long_reads.fq}!")
         elif forward_read != "0" or reverse_read != "0":
-            parser.error("\nLong-reads mode requires -l {path_to_long_reads.fq} only!\ 
-            To analyse short-reads use short-reads mode or hybrid mode")
+            parser.error("\nLong-reads mode requires -l {path_to_long_reads.fq} only!\nTo analyse short-reads use short-reads mode or hybrid mode")
         else:
             long_read = os.path.abspath(long_read)
             
-    elif mode == "fasta_rna_faa":
-        if forward_rna_read == "0" or reverse_rna_read == "0" or faa_file == "0":
+    elif mode == "hybrid":
+        if forward_read == "0" or reverse_read == "0" or long_read == "0":
             parser.error("\nHybrid mode requires -1 {path_to_forward_read} AND -2 {path_to_reverse_read} AND -l {path_to_long_reads.fq}!")
         else:
-            faa_file = os.path.abspath(faa_file)
-            forward_rna_read = os.path.abspath(forward_rna_read)
-            reverse_rna_read = os.path.abspath(reverse_rna_read)
+            long_read = os.path.abspath(faa_file)
+            forward_read = os.path.abspath(forward_rna_read)
+            reverse_read = os.path.abspath(reverse_rna_read)
             
     if reference_fasta != "0":
         reference_fasta = os.path.abspath(reference_fasta)
