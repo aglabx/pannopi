@@ -1,6 +1,6 @@
 rule busco:
     input:
-        assembly = rules.assembly.output.assembly_fasta
+        assembly = rules.assembly.output.assembly
     conda:
         envs.busco
     output:
