@@ -4,6 +4,14 @@ rule all:
     input:
         results_file = config["results_file"]
 
+rule locals:
+    params:
+       busco_db = "",
+       blastn_db = "",
+       eggnog_db = ""
+
+locals = rules.locals.params
+
 rule tools:
     params:
         contera = "tools/contera/contera.py",
@@ -18,36 +26,38 @@ tools = rules.tools.params
 
 rule envs:
     params:
-        abricate = "envs/abricate.yaml",
-        fastqc = "envs/fastqc.yaml",
-        mlst = "envs/mlst.yaml",
-        prokka = "envs/prokka.yaml",
-        r = "envs/r.yaml",
-        skesa = "envs/skesa.yaml",
-        unicycler = "envs/unicycler.yaml",
-        blast = "envs/blast.yaml",
-        jellyfish = "envs/jellyfish.yaml",
-        ncbidown = "envs/ncbi-download.yaml",
-        quast = "envs/quast.yaml",
-        samtools = "envs/samtools.yaml",
-        spades = "envs/spades.yaml",
-        v2trim = "envs/v2trim.yaml",
-        rmdup = "envs/rmdup.yaml",
-        busco = "envs/busco.yaml",
-        fastani = "envs/fastani.yaml"
-        
+        abricate = "../../envs/abricate.yaml",
+        fastqc = "../../envs/fastqc.yaml",
+        mlst = "../../envs/mlst.yaml",
+        prokka = "../../envs/prokka.yaml",
+        r = "../../envs/r.yaml",
+        skesa = "../../envs/skesa.yaml",
+        unicycler = "../../envs/unicycler.yaml",
+        blast = "../../envs/blast.yaml",
+        jellyfish = "../../envs/jellyfish.yaml",
+        ncbidown = "../../envs/ncbi-download.yaml",
+        quast = "../../envs/quast.yaml",
+        samtools = "../../envs/samtools.yaml",
+        spades = "../../envs/spades.yaml",
+        v2trim = "../../envs/v2trim.yaml",
+        rmdup = "../../envs/rmdup.yaml",
+        busco = "../../envs/busco.yaml",
+        fastani = "../../envs/fastani.yaml",
+        eggnog = "../../envs/eggnog.yaml"
+
 envs = rules.envs.params
 
-include: "rules/prepare.smk"
+include: "../rules/assembly_rules/unicycler_long.smk"
 
-include: config["unicycler_rule"]
+#include: "../rules/cleaning.smk"
 
-include: "rules/cleaning.smk"
+include: "../rules/structural_annotation.smk"
 
-include: "rules/structural_annotation.smk"
+if config["reference_file"] == "False":
+    include: "../rules/qc.smk"
+else:
+    include: "../rules/qc_ref.smk"
 
-include: "rules/qc.smk"
+include: "../rules/functional_annotation.smk"
 
-include: "rules/functional_annotation.smk"
-
-include: "rules/results.smk"
+include: "../rules/results_long.smk"
