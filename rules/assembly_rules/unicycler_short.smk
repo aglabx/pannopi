@@ -1,13 +1,12 @@
 rule assembly:
     input:
-        forward_reads = rules.rmdub.output.rmdub_out_file1,
-        reverse_reads = rules.rmdub.output.rmdub_out_file2
+        forward_reads = rules.rmdup.output.rmdup_out_forward,
+        reverse_reads = rules.rmdup.output.rmdup_out_reverse
     conda:
         envs.unicycler
     threads: workflow.cores
     output:
         assembly = config["assembly"],
-        assembly_gfa = config["assembly_gfa"],
     params:
         dir = directory(config["assembly_dir"])
     shell:

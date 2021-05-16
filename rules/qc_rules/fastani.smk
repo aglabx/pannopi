@@ -1,7 +1,7 @@
-rule quast:
+rule fastani:
     input:
-        assembly = rules.assembly.output.assembly
-        ref = config["reeference_file"]
+        assembly = rules.assembly.output.assembly,
+        ref = config["reference_file"]
     conda:
         envs.quast
     output:

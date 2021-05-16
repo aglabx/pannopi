@@ -1,1 +1,1 @@
-include: "struct_anno_rules/prokka.smk"
+include: "struct_ann_rules/prokka.smk"

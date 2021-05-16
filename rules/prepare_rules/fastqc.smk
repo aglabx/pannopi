@@ -1,7 +1,7 @@
 rule fastqc1:
     input:
-        forward_read = config["raw_fastq_1"],
-        rewerse_read = config["raw_fastq_2"]
+        forward_read = config["v2trim_in_file1"],
+        rewerse_read = config["v2trim_in_file2"]
     conda:
         envs.fastqc
     output:
@@ -18,8 +18,8 @@ rule fastqc1:
 
 rule fastqc2:
     input:
-        rules.rmdub.output.rmdub_out_file1,
-        rules.rmdub.output.rmdub_out_file2
+        rules.rmdup.output.rmdup_out_forward,
+        rules.rmdup.output.rmdup_out_reverse
     conda:
         envs.fastqc
     output:

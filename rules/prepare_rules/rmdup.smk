@@ -1,7 +1,7 @@
 rule rmdup:
     input:
-        v2trim_out_forward = rules.trimming.output.v2trim_out_forward,
-        v2trim_out_reverse = rules.trimming.output.v2trim_out_reverse,
+        v2trim_out_forward = rules.v2trim.output.v2trim_out_forward,
+        v2trim_out_reverse = rules.v2trim.output.v2trim_out_reverse,
     conda:
         envs.rmdup
     threads: 20

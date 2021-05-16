@@ -1,6 +1,6 @@
 rule jellycount:
     input:
-        rules.rmdub.output,
+        rules.rmdup.output,
     conda:
         envs.jellyfish
     output:

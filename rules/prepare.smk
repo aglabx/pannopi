@@ -1,7 +1,7 @@
-include: "prepare_rules/v2rim.smk"
+include: "prepare_rules/v2trim.smk"
 
 include: "prepare_rules/rmdup.smk"
 
-include: "qc_rules/fastqc.smk"
+include: "prepare_rules/fastqc.smk"
 
-include: "qc_rules/jellyfish+genomescope.smk"
+include: "prepare_rules/jellyfish_genomescope.smk"
