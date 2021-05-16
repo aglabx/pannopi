@@ -8,9 +8,12 @@
 import argparse
 import os
 import os.path
+from inspect import getsourcefile
 
 def config_universal(prefix, outdir, reference):
     config_uni = f"""
+prefix: "{prefix}"    
+
 #ASSEMBLY
 assembly_dir: "{outdir}/genome_assembly/unicycler"
 assembly: "{outdir}/genome_assembly/unicycler/assembly.fasta"
@@ -47,16 +50,20 @@ mlst: "{outdir}/func_annotation/{prefix}_mlst_type.txt"
 
 #RESULT STEP
 results_path: "{outdir}/results/"
+results_file: "{outdir}/results/{prefix}_AMR_and_virulence_summary.txt"
 """
     if reference:
         config_ref = f"""
-        reference_file: "{reference}"
-        
-        fastani_dir: "{outdir}/QC/fastani"
-        fastani_outfile: "{outdir}/QC/fastani/{prefix}_fastani.txt"
-        
+reference_file: "{reference}"
+fastani_dir: "{outdir}/QC/fastani"
+fastani_outfile: "{outdir}/QC/fastani/{prefix}_fastani.txt"
+"""
+    else:
+        config_ref = """
+reference_file: "0"
         """
-        config_uni += config_ref
+
+    config_uni += config_ref
     return config_uni
 
 def config_short_mode(forward_read, reverse_read, prefix, outdir):
@@ -96,7 +103,7 @@ scope_file: "{outdir}/preparation/QC/jellyfish/scope/plot.png"
 
 def config_long_mode(long_read, prefix, outdir):
     config_long = f"""
-long_reads_file = {long_read}
+long_reads_file: {long_read}
 """
     return config_long
 
