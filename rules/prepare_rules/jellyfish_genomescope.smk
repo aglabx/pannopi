@@ -34,13 +34,13 @@ rule genomescope:
     input:
         rules.jellyhisto.output
     conda:
-        envs.r
+        envs.genomescope
     output:
         scope_file = config["scope_file"]
     params:
-        scope = tools.genomescope,
-        scope_dir = directory(config["scope_dir"])
+        scope_dir = directory(config["scope_dir"]),
+        prefix = config["prefix"]
     shell:
         """
-        Rscript {params.scope} {input} 23 100 {params.scope_dir} 1000
+        genomescope2 -i {input} -o {params.scope_dir} -k 23 -n {params.prefix}
         """

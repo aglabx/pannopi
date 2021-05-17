@@ -1,20 +1,25 @@
 rule busco:
     input:
-        assembly = rules.assembly.output.assembly
+        anno_faa = rules.annotation.output.annotation_faa
     conda:
         envs.busco
+    threads: workflow.cores
     output:
         busco_outfile = config["busco_outfile"]
-    threads: workflow.cores
     params:
-        db = locals.busco_db
+        db = locals.busco_db_downloads,
+        folder_to_run = directory(config["busco_run_dir"]),
+        outdir = "busco"
     shell:
-       """busco \
+       """
+       cd {params.folder_to_run}
+       
+       busco \
              --auto-lineage-prok \
-             --config /home/dzilov/soft/busco5/config/config.ini \
-             -i /mnt/data/vgp/glis_glis/GCA_004024805.1_XerIna_v1_BIUU_genomic.fna \
-             -c 150 \
-             -m geno \
+             -i {input.anno_faa} \
+             -o {params.outdir} \
+             -m prot \
              -f \
-             --out GCA_004024805.1_XerIna_v1_BIUU_genomic_result
+             -c {threads} \
+             --download_path {params.db}
              """  

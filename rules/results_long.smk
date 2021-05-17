@@ -3,6 +3,8 @@ rule results:
         assembly = rules.assembly.output.assembly,
         egg = rules.eggnog.output,
         quast = rules.quast.output,
+        busco = rules.busco.output.busco_outfile,
+        proteins = rules.annotation.output.annotation_faa,
         whole_report = rules.abricate_summary.output,
     output:
         results_file = config["results_file"],

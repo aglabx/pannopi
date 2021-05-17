@@ -3,12 +3,12 @@ rule fastani:
         assembly = rules.assembly.output.assembly,
         ref = config["reference_file"]
     conda:
-        envs.quast
+        envs.fastani
     output:
         config["fastani_outfile"]
     params:
         fastani_dir = directory(config["fastani_dir"])
     shell:
         """
-        fastani -i {input.assembly} -r {input.ref} -o {output}
+        fastANI -q {input.assembly} -r {input.ref} -o {output}
         """

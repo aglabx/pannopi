@@ -10,4 +10,4 @@ rule assembly:
     params:
         dir = directory(config["assembly_dir"])
     shell:
-        "unicycler -1 {input.forward_reads} -2 {input.reverse_reads} -t {threads} -o {params}"
+        "unicycler -1 {input.forward_reads} -2 {input.reverse_reads} -t {threads} --no_pilon -o {params}"
