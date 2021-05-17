@@ -28,16 +28,16 @@ annotation_dir: "{outdir}/struct_annotation/prokka/"
 annotation_faa: "{outdir}/struct_annotation/prokka/{prefix}.faa"
 annotation_gbk: "{outdir}/struct_annotation/prokka/{prefix}.gbk"
 # busco QC
-busco_dir: "{outdir}/struct_annotation/QC/busco"
-busco_outfile: "{outdir}/struct_annotation/QC/{prefix}_busco/short_summary.bacteria_odb10.{prefix}_busco.txt"
+busco_run_dir: "{outdir}/struct_annotation/QC"
+busco_outfile: "{outdir}/struct_annotation/QC/busco/short_summary.specific.bacteria_odb10.busco.txt"
 
 # FUNCTIONAL ANNOTATION
 
 #eggnog
-eggnog_dir: "{outdir}/eggnog/"
+eggnog_dir: "{outdir}/func_annotation/eggnog/"
 eggnog_prefix: "{prefix}"
-eggnog_out_annotation: "{outdir}/eggnog/{prefix}.emapper.annotations"
-eggnog_out_orthologs: "{outdir}/eggnog/{prefix}.emapper.seed_orthologs"
+eggnog_out_annotation: "{outdir}/func_annotation/eggnog/{prefix}.emapper.annotations"
+eggnog_out_orthologs: "{outdir}/func_annotation/eggnog/{prefix}.emapper.seed_orthologs"
 
 funcan_dir: "{outdir}/func_annotation/"
 megares: "{outdir}/func_annotation/{prefix}_megares_report.txt"
@@ -50,13 +50,13 @@ mlst: "{outdir}/func_annotation/{prefix}_mlst_type.txt"
 
 #RESULT STEP
 results_path: "{outdir}/results/"
-results_file: "{outdir}/results/{prefix}_AMR_and_virulence_summary.txt"
+results_file: "{outdir}/results/{prefix}_fastani.txt"
 """
     if reference:
         config_ref = f"""
 reference_file: "{reference}"
-fastani_dir: "{outdir}/QC/fastani"
-fastani_outfile: "{outdir}/QC/fastani/{prefix}_fastani.txt"
+fastani_dir: "{outdir}/structural_annotation/QC/fastani"
+fastani_outfile: "{outdir}/structural_annotation/QC/fastani/{prefix}_fastani.txt"
 """
     else:
         config_ref = """
@@ -82,44 +82,41 @@ v2trim_out_statistics: "{outdir}/preparation/v2trim/{prefix}.stats"
 
 #rmdup
 rmdup_dir: "{outdir}/preparation/rmdup/"
+rmdup_prefix: "{outdir}/preparation/rmdup/{prefix}.rm"
 rmdup_out_file1: "{outdir}/preparation/rmdup/{prefix}.rm_1.fastq"
 rmdup_out_file2: "{outdir}/preparation/rmdup/{prefix}.rm_2.fastq"
 rmdup_out_statistics: "{outdir}/preparation/rmdup/{prefix}.rm.stats"
 
 #FASTQC
-fastqc1_dir: "{outdir}/preparation/QC/fastqc/fastqc_raw"
-fastqc2_dir: "{outdir}/preparation/QC/fastqc/fastqc_clean"
-fastqc_file1: "{outdir}/preparation/QC/fastqc/fastqc_raw/{prefix}_1_fastqc.zip"
-fastqc_file2: "{outdir}/preparation/QC/fastqc/fastqc_clean/{prefix}.rm_2_fastqc.zip"
+fastqc1_dir: "{outdir}/preparation/QC/fastqc_raw"
+fastqc2_dir: "{outdir}/preparation/QC/fastqc_clean"
+fastqc_file1: "{outdir}/preparation/QC/fastqc_raw/{prefix}_1_fastqc.zip"
+fastqc_file2: "{outdir}/preparation/QC/fastqc_clean/{prefix}.rm_2_fastqc.zip"
 
 #JELLY FILES
 jellycount_file: "{outdir}/preparation/QC/jellyfish/{prefix}.jf2"
 jellyhisto_file: "{outdir}/preparation/QC/jellyfish/{prefix}.histo"
-scope_dir: "{outdir}/preparation/QC/jellyfish/scope/"
-scope_file: "{outdir}/preparation/QC/jellyfish/scope/plot.png"
+scope_dir: "{outdir}/preparation/QC/genomescope/"
+scope_file: "{outdir}/preparation/QC/genomescope/{prefix}_linear_plot.png"
 """
     return config_short
     
 
 def config_long_mode(long_read, prefix, outdir):
     config_long = f"""
-long_reads_file: {long_read}
+long_reads_file: "{long_read}"
 """
     return config_long
 
 
 def config_hybrid_mode(long_read, forward_read, reverse_read, prefix, outdir):
     config_hybrid = config_short_mode(forward_read, reverse_read, prefix, outdir) + \
-                    config_universal(long_read, prefix, outdir)
+                    config_long_mode(long_read, prefix, outdir)
     return config_hybrid
 
     
 
-def main(forward_read, reverse_read, long_read, prefix, outdir, mode, execution_folder):
-    ''' Function description.
-    '''
-    config_file = f"{execution_folder}/config/config.yaml"
-
+def main(forward_read, reverse_read, long_read, prefix, outdir, mode, config_file):
     
     if mode == "short":
         config = config_short_mode(forward_read, reverse_read, prefix, outdir) + \
@@ -145,6 +142,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mode', help = 'Pannopi mode', required = True)
     parser.add_argument('-p', '--prefix', help='Prefix for output files', required=True)
     parser.add_argument('-o', '--outdir', help='Output directory', required=True)
+    parser.add_argument('-c', '--configfile', help='path_to_configfile', required=True)
     args = vars(parser.parse_args())
     
     # All of parameters goes in absolute paths from pannopi.py
@@ -155,7 +153,6 @@ if __name__ == '__main__':
     outdir = args["outdir"]
     mode = args["mode"]
     prefix =args["prefix"]
-    
-    execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
+    config_file = args["configfile"]
 
-    main(forward_read, reverse_read, long_read, prefix, outdir, mode, execution_folder)
+    main(forward_read, reverse_read, long_read, prefix, outdir, mode, config_file)
