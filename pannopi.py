@@ -10,6 +10,8 @@ import os
 import os.path
 from inspect import getsourcefile
 from datetime import datetime
+import string
+import random
 
 
 def config_short(forward_read, reverse_read, reference_fasta, prefix, outdir, mode, execution_folder, config_file):
@@ -77,8 +79,8 @@ if __name__ == '__main__':
     
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
     execution_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    
-    config_file = os.path.join(execution_folder, f"config/config_{execution_time}.yaml")
+    random_letters = "".join([random.choice(string.ascii_letters) for n in range(3)])
+    config_file = os.path.join(execution_folder, f"config/config_{random_latters}{execution_time}.yaml")
 
     if reference_fasta != "0":
         reference_fasta = os.path.abspath(reference_fasta)
