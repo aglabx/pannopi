@@ -1,7 +1,9 @@
 rule all:
     input:
         results_file = config["results_file"]
-
+    log: config["pannopi_log"]
+    benchmark: config["pannopi_bench"]
+    
 include: "settings.snakefile"
 
 include: "../rules/prepare.smk"
@@ -19,4 +21,7 @@ else:
 
 include: "../rules/functional_annotation.smk"
 
-include: "../rules/results.smk"
+if config["reference_file"] == "False":
+    include: "../rules/results.smk"
+else:
+    include: "../rules/results_ref.smk"
