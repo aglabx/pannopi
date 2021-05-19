@@ -4,6 +4,7 @@ rule fastqc1:
         rewerse_read = config["v2trim_in_file2"]
     conda:
         envs.fastqc
+    threads: workflow.cores - 1
     output:
         fastq_file_1 = config["fastqc_file1"],
     params:
@@ -12,7 +13,7 @@ rule fastqc1:
         """
         fastqc \
             -o {params.fastqc1_dir} \
-            -t 32 \
+            -t {threads} \
             {input}
         """
 
@@ -22,6 +23,7 @@ rule fastqc2:
         rules.rmdup.output.rmdup_out_reverse
     conda:
         envs.fastqc
+    threads: workflow.cores - 1 
     output:
         fastq_file_2 = config["fastqc_file2"]
     params:
@@ -30,6 +32,6 @@ rule fastqc2:
         """
         fastqc \
             -o {params.fastqc2_dir} \
-            -t 32 \
+            -t {threads} \
             {input}
         """

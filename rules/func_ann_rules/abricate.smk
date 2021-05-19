@@ -3,6 +3,7 @@ rule megares:
         assembly_filtered = rules.assembly.output.assembly
     output:
         megares_report = config["megares"]
+    threads: 1
     conda:
         envs.abricate
     shell:
@@ -13,6 +14,7 @@ rule ncbi:
         assembly_filtered = rules.assembly.output.assembly
     output:
         ncbi_report = config["ncbi"]
+    threads: 1
     conda:
         envs.abricate
     shell:
@@ -23,6 +25,7 @@ rule plasmid:
         assembly_filtered = rules.assembly.output.assembly
     output:
         plasmids_report = config["plasmids"]
+    threads: 1
     conda:
         envs.abricate
     shell:
@@ -33,6 +36,7 @@ rule virulence:
         assembly_filtered = rules.assembly.output.assembly
     output:
         plasmids_report = config["virulence"]
+    threads: 1
     conda:
         envs.abricate
     shell:
@@ -43,6 +47,7 @@ rule serotype:
         assembly_filtered = rules.assembly.output.assembly
     output:
         plasmids_report = config["serotype"]
+    threads: 1
     conda:
         envs.abricate
     shell:
@@ -57,6 +62,7 @@ rule abricate_summary:
         serotype = rules.serotype.output,
     output:
         whole_report = config["abricate_summary"]
+    threads: 1
     conda:
         envs.abricate
     shell:

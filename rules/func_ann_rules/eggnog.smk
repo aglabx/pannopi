@@ -4,7 +4,7 @@ rule eggnog:
     conda:
         envs.eggnog
     threads:
-        workflow.cores
+        workflow.cores - 1
     log: config["eggnog_log"]
     benchmark: config["eggnog_bench"]
     output:

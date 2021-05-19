@@ -4,6 +4,7 @@ rule fastani:
         ref = config["reference_file"]
     conda:
         envs.fastani
+    threads: 1
     output:
         config["fastani_outfile"]
     log: config["fastani_log"]

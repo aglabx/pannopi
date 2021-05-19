@@ -5,7 +5,7 @@ rule assembly:
         reverse_reads = rules.rmdup.output.rmdup_out_reverse,
     conda:
         envs.unicycler
-    threads: workflow.cores
+    threads: min(workflow.cores, 32)
     log: config["unicycler_log"]
     benchmark: config["unicycler_bench"]
     output:

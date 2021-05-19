@@ -3,7 +3,7 @@ rule annotation:
         rules.assembly.output.assembly
     conda:
         envs.prokka
-    threads: workflow.cores
+    threads: workflow.cores - 1
     output:
         annotation_faa = config["annotation_faa"],
         annotation_gbk = config["annotation_gbk"],

@@ -4,7 +4,7 @@ rule rmdup:
         v2trim_out_reverse = rules.v2trim.output.v2trim_out_reverse,
     conda:
         envs.rmdup
-    threads: workflow.cores
+    threads: workflow.cores - 1
     log: config["rmdup_log"]
     benchmark: config["rmdup_bench"]
     output:

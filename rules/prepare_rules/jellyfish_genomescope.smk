@@ -3,6 +3,7 @@ rule jellycount:
         rules.rmdup.output,
     conda:
         envs.jellyfish
+    threads: 1
     output:
         jellycount_file = config["jellycount_file"],
     shell:
@@ -21,6 +22,7 @@ rule jellyhisto:
         rules.jellycount.output,
     conda:
         envs.jellyfish
+    threads: 1
     output:
         jellyhisto_file = config["jellyhisto_file"],
     shell:
@@ -35,6 +37,7 @@ rule genomescope:
         rules.jellyhisto.output
     conda:
         envs.genomescope
+    threads: 1
     output:
         scope_file = config["scope_file"]
     log: config["genomescope_log"]

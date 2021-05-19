@@ -3,7 +3,7 @@ rule busco:
         anno_faa = rules.annotation.output.annotation_faa
     conda:
         envs.busco
-    threads: workflow.cores
+    threads: workflow.cores - 1
     output:
         busco_outfile = config["busco_outfile"]
     log: config["busco_log"]

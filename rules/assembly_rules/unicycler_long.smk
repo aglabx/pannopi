@@ -3,7 +3,7 @@ rule assembly:
         long_reads = config["long_reads_file"]
     conda:
         envs.unicycler
-    threads: workflow.cores
+    threads: min(workflow.cores, 32)
     log: config["unicycler_log"]
     benchmark: config["unicycler_bench"]
     output:
