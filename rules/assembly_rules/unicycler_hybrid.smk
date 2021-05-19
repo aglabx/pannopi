@@ -6,11 +6,18 @@ rule assembly:
     conda:
         envs.unicycler
     threads: workflow.cores
+    log: config["unicycler_log"]
+    benchmark: config["unicycler_bench"]
     output:
         assembly = config["assembly"],
     params:
         dir = directory(config["assembly_dir"])
     shell:
         """
-        unicycler -1 {input.forward_reads} -2 {input.reverse_reads} -l {input.long_reads} -t {threads} --no_pilon -o {params}
+        unicycler -1 {input.forward_reads} \
+        -2 {input.reverse_reads} \
+        -l {input.long_reads} \
+        -t {threads} \
+        --no_pilon \
+        -o {params} 2> {log} | tee -a {log}
         """

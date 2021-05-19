@@ -5,6 +5,8 @@ rule rmdup:
     conda:
         envs.rmdup
     threads: workflow.cores
+    log: config["rmdup_log"]
+    benchmark: config["rmdup_bench"]
     output:
         rmdup_out_forward = config["rmdup_out_file1"],
         rmdup_out_reverse = config["rmdup_out_file2"],
@@ -17,5 +19,5 @@ rule rmdup:
                  -2 {input.v2trim_out_reverse} \
                  -o {params.rmdup_dir} \
                  -p {params.rmdup_prefix} \
-                 -t {threads} """
+                 -t {threads} 2> {log} | tee -a {log}"""
 

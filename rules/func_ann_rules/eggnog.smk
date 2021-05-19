@@ -5,6 +5,8 @@ rule eggnog:
         envs.eggnog
     threads:
         workflow.cores
+    log: config["eggnog_log"]
+    benchmark: config["eggnog_bench"]
     output:
         eggnog_out_annotation = config["eggnog_out_annotation"], 
         eggnog_out_orthologs = config["eggnog_out_orthologs"],
@@ -21,5 +23,5 @@ rule eggnog:
           --data_dir {params.eggnog_db} \
           --output {params.eggnog_prefix} \
           --output_dir {params.eggnog_dir} \
-          --report_orthologs
+          --report_orthologs 2> {log} | tee -a {log}
         """

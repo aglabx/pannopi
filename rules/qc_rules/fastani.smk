@@ -6,9 +6,11 @@ rule fastani:
         envs.fastani
     output:
         config["fastani_outfile"]
+    log: config["fastani_log"]
+    benchmark: config["fastani_bench"]
     params:
         fastani_dir = directory(config["fastani_dir"])
     shell:
         """
-        fastANI -q {input.assembly} -r {input.ref} -o {output}
+        fastANI -q {input.assembly} -r {input.ref} -o {output} 2> {log} | tee -a {log}
         """

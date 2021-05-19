@@ -37,10 +37,12 @@ rule genomescope:
         envs.genomescope
     output:
         scope_file = config["scope_file"]
+    log: config["genomescope_log"]
+    benchmark: config["genomescope_bench"]
     params:
         scope_dir = directory(config["scope_dir"]),
         prefix = config["prefix"]
     shell:
         """
-        genomescope2 -i {input} -o {params.scope_dir} -k 23 -n {params.prefix}
+        genomescope2 -i {input} -o {params.scope_dir} -k 23 -n {params.prefix} 2> {log} | tee -a {log}
         """

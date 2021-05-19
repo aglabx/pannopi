@@ -1,7 +1,6 @@
 rule results:
     input:
         assembly = rules.assembly.output.assembly,
-        egg = rules.eggnog.output,
         scope = rules.genomescope.output,
         fast1 = rules.fastqc1.output,
         fast2 = rules.fastqc2.output,

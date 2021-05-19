@@ -29,7 +29,8 @@ annotation_faa: "{outdir}/struct_annotation/prokka/{prefix}.faa"
 annotation_gbk: "{outdir}/struct_annotation/prokka/{prefix}.gbk"
 # busco QC
 busco_run_dir: "{outdir}/struct_annotation/QC"
-busco_outfile: "{outdir}/struct_annotation/QC/busco/short_summary.specific.bacteria_odb10.busco.txt"
+busco_summary: "{outdir}/struct_annotation/QC/busco/short_summary.specific*.txt"
+busco_outfile: "{outdir}/struct_annotation/QC/busco/{prefix}_busco.txt"
 
 # FUNCTIONAL ANNOTATION
 
@@ -51,6 +52,30 @@ mlst: "{outdir}/func_annotation/{prefix}_mlst_type.txt"
 #RESULT STEP
 results_path: "{outdir}/results/"
 results_file: "{outdir}/results/{prefix}_fastani.txt"
+
+#logs_and_benchmarks
+
+pannopi_log: "{outdir}/logs/pannopi.log"
+v2trim_log: "{outdir}/logs/v2trim.log"
+rmdup_log: "{outdir}/logs/rmdup.log"
+genomescope_log: "{outdir}/logs/genomescope.log"
+unicycler_log: "{outdir}/logs/unicycler.log"
+prokka_log: "{outdir}/logs/prokka.log"
+fastani_log: "{outdir}/logs/fastani.log"
+busco_log: "{outdir}/logs/busco.log"
+eggnog_log: "{outdir}/logs/eggnog.log"
+
+pannopi_bench: "{outdir}/benchmark/pannopi.tsv"
+pannopi_bench: "{outdir}/benchmark/pannopi.tsv"
+v2trim_bench: "{outdir}/benchmark/v2trim.tsv"
+rmdup_bench: "{outdir}/benchmark/rmdup.tsv"
+genomescope_bench: "{outdir}/benchmark/genomescope.tsv"
+unicycler_bench: "{outdir}/benchmark/unicycler.tsv"
+prokka_bench: "{outdir}/benchmark/prokka.tsv"
+fastani_bench: "{outdir}/benchmark/fastani.tsv"
+busco_bench: "{outdir}/benchmark/busco.tsv"
+eggnog_bench: "{outdir}/benchmark/eggnog.tsv"
+
 """
     if reference:
         config_ref = f"""

@@ -5,6 +5,8 @@ rule v2trim:
     conda:
         envs.v2trim
     threads: workflow.cores
+    log: config["v2trim_log"]
+    benchmark: config["v2trim_bench"]
     output:
         v2trim_out_forward = config["v2trim_out_file1"] ,
         v2trim_out_reverse = config["v2trim_out_file2"],
@@ -17,5 +19,5 @@ rule v2trim:
                  -2 {input.v2trim_in_reverse} \
                  -o {params.v2trim_dir} \
                  -p {params.v2trim_prefix} \
-                 -t {threads}
+                 -t {threads} 2> {log} | tee -a {log}
                  """
