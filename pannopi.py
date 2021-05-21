@@ -80,7 +80,7 @@ if __name__ == '__main__':
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
     execution_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     random_letters = "".join([random.choice(string.ascii_letters) for n in range(3)])
-    config_file = os.path.join(execution_folder, f"config/config_{random_latters}{execution_time}.yaml")
+    config_file = os.path.join(execution_folder, f"config/config_{random_letters}{execution_time}.yaml")
 
     if reference_fasta != "0":
         reference_fasta = os.path.abspath(reference_fasta)
