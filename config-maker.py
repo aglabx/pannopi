@@ -116,7 +116,7 @@ rmdup_out_statistics: "{outdir}/preparation/rmdup/{prefix}.rm.stats"
 fastqc1_dir: "{outdir}/preparation/QC/fastqc_raw"
 fastqc2_dir: "{outdir}/preparation/QC/fastqc_clean"
 fastqc_file1: "{outdir}/preparation/QC/fastqc_raw/{prefix}_1_fastqc.zip"
-fastqc_file2: "{outdir}/preparation/QC/fastqc_clean/{prefix}.rm_2_fastqc.zip"
+fastqc_file2: "{outdir}/preparation/QC/fastqc_clean/{prefix}.trim_2_fastqc.zip"
 
 #JELLY FILES
 jellycount_file: "{outdir}/preparation/QC/jellyfish/{prefix}.jf2"

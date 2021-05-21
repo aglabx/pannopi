@@ -1,7 +1,7 @@
 rule assembly:
     input:
-        forward_reads = rules.rmdup.output.rmdup_out_forward,
-        reverse_reads = rules.rmdup.output.rmdup_out_reverse
+        forward_reads = rules.v2trim.output.v2trim_out_forward,
+        reverse_reads = rules.v2trim.output.v2trim_out_reverse,
     conda:
         envs.unicycler
     threads: min(workflow.cores, 32)

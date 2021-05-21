@@ -19,8 +19,8 @@ rule fastqc1:
 
 rule fastqc2:
     input:
-        rules.rmdup.output.rmdup_out_forward,
-        rules.rmdup.output.rmdup_out_reverse
+        rules.v2trim.output.v2trim_out_forward,
+        rules.v2trim.output.v2trim_out_reverse,
     conda:
         envs.fastqc
     threads: workflow.cores - 1 

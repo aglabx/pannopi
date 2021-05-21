@@ -1,6 +1,6 @@
 rule jellycount:
     input:
-        rules.rmdup.output,
+        rules.v2trim.output,
     conda:
         envs.jellyfish
     threads: 1
