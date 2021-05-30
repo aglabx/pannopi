@@ -1,8 +1,8 @@
 rule locals:
     params:
        blastn_db = "/mnt/projects/shared/ncbi/blast/db/nt",
-       eggnog_db = "/mnt/projects/databases/eggnog_database_212",
-       busco_db_downloads = "/mnt/projects/databases/busco" # folder in which busco will store databases
+       eggnog_db = "/media/eternus1/nfs/projects/shared/databases/eggnog_database_212",
+       busco_db_downloads = "/media/eternus1/nfs/projects/shared/databases/busco" # folder in which busco will store databases
 
 locals = rules.locals.params
 
