@@ -123,7 +123,7 @@ if __name__ == '__main__':
     debug = args["debug"]
     mode = args["mode"]
     
-    execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
+    execution_folder = os.path.dirname(os.path.dirname(os.path.abspath(getsourcefile(lambda: 0))))
     execution_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     random_letters = "".join([random.choice(string.ascii_letters) for n in range(3)])
     config_file = os.path.join(execution_folder, f"config/config_{random_letters}{execution_time}.yaml")
