@@ -25,7 +25,7 @@ rule envs:
         unicycler = "../../envs/unicycler.yaml",
         blast = "../../envs/blast.yaml",
         jellyfish = "../../envs/jellyfish.yaml",
-        ncbidown = "../../envs/ncbi-download.yaml",
+        contera = "../../envs/contera.yaml",
         quast = "../../envs/quast.yaml",
         samtools = "../../envs/samtools.yaml",
         spades = "../../envs/spades.yaml",
