@@ -6,7 +6,10 @@ include: "settings.snakefile"
 
 include: "../rules/assembly_rules/unicycler_long.smk"
 
-#include: "../rules/cleaning.smk"
+if locals.blastn_db != "False":
+    include: "../rules/qc_rules/contera_aio.smk"
+else:
+    include: "../rules/qc_rules/contera_adapters.smk"
 
 include: "../rules/structural_annotation.smk"
 

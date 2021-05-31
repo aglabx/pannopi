@@ -1,6 +1,7 @@
 rule results:
     input:
-        assembly_filtered = rules.assembly.output.assembly,
+        assembly = rules.assembly.output.assembly,
+        assembly_filtered = rules.contera.output,
         scope = rules.genomescope.output,
         fast1 = rules.fastqc1.output,
         fast2 = rules.fastqc2.output,

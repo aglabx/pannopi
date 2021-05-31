@@ -1,6 +1,6 @@
 rule megares:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output
     output:
         megares_report = config["megares"]
     threads: 1
@@ -11,7 +11,7 @@ rule megares:
 
 rule ncbi:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output
     output:
         ncbi_report = config["ncbi"]
     threads: 1
@@ -22,7 +22,7 @@ rule ncbi:
 
 rule plasmid:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output
     output:
         plasmids_report = config["plasmids"]
     threads: 1
@@ -33,7 +33,7 @@ rule plasmid:
 
 rule virulence:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output
     output:
         plasmids_report = config["virulence"]
     threads: 1
@@ -44,7 +44,7 @@ rule virulence:
 
 rule serotype:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output
     output:
         plasmids_report = config["serotype"]
     threads: 1

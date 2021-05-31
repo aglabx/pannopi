@@ -1,6 +1,7 @@
 rule results:
     input:
         assembly = rules.assembly.output.assembly,
+        assembly_filtered = rules.contera.output,
         egg = rules.eggnog.output,
         quast = rules.quast.output,
         busco = rules.busco.output.busco_outfile,

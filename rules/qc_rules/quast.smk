@@ -1,6 +1,6 @@
 rule quast:
     input:
-        assembly = rules.assembly.output.assembly
+        assembly = rules.contera.output
     conda:
         envs.quast
     output:

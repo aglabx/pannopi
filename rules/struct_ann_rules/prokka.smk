@@ -1,6 +1,6 @@
 rule annotation:
     input:
-        rules.assembly.output.assembly
+        rules.contera.output
     conda:
         envs.prokka
     threads: workflow.cores - 1

@@ -1,6 +1,6 @@
 rule mlst:
     input:
-        assembly_filtered = rules.assembly.output.assembly
+        assembly_filtered = rules.contera.output
     output:
         config["mlst"]
     threads: 1

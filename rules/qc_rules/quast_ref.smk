@@ -1,6 +1,6 @@
 rule quast:
     input:
-        assembly = rules.assembly.output.assembly,
+        assembly = rules.contera.output,
         ref = config["reference_file"]
     conda:
         envs.quast
