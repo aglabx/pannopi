@@ -7,13 +7,9 @@ source:
 
 requirements:
   run:
-    - python
-    - unzip
-    - tar
-    - gzip
     - blast
     - snakemake >=6.4.0
-    - eggnog-mapper =2.1.2
+    - eggnog-mapper ==2.1.2
 
 test:
   commands:
