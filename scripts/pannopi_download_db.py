@@ -56,12 +56,12 @@ def download_eggnog(outdir):
     cmd = f"download_eggnog_data.py --data_dir {eggnog_data_dir} -y"
     if not os.path.exists(eggnog_data_dir):
         os.makedirs(eggnog_data_dir)
+        os.system(cmd)
+        return eggnog_data_dir
     elif os.path.exists(eggnog_db):
         print("\nEggnog database already downloaded, continue...\n")
         return eggnog_data_dir
-    else:
-        os.system(cmd)
-        return eggnog_data_dir
+
 
 
 def download_blast(outdir):
@@ -76,11 +76,11 @@ def download_blast(outdir):
     cmd = (
         f'cd {blastnt_data_dir} && '
         f'echo Download blast database..'
-        f'wget -nH --user-agent=Mozilla/5.0 --relative --no-parent --reject "index.html*" --cut-dirs=4 -e robots=off -O swissprot.gz {blast_nt_url} && '
+        f'wget -nH --user-agent=Mozilla/5.0 --relative --no-parent --reject "index.html*" --cut-dirs=4 -e robots=off -O nt.gz {blast_nt_url} && '
         f'echo Decompressing... && '
-        f'gunzip swissprot.gz && '
+        f'gunzip nt.gz && '
         f'echo Build database... &&'
-        f'makeblastdb -dbtype prot -in swissprot'
+        f'makeblastdb -dbtype nucl -in nt'
     )
     os.system(cmd)
     return blast_db
