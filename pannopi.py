@@ -13,10 +13,10 @@ from datetime import datetime
 import string
 import random
 
-def check_for_eggnog_db(settings_file):
+def check_for_databases(settings_file):
     if not os.path.exists(settings_file):
-        raise ValueError("Pannopi requires eggnog-database, please download or set it "
-                         "with pannopi_download_db.py!")
+        raise ValueError("\nPannopi requires eggnog-database, please download or set it "
+                         "with pannopi_download_db.py!\n")
     else:
         return True
 #         ask_for_database = input("Pannopi requires eggnog-database (~50GB), do you wanna download it? [y/n]: ")
