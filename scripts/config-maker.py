@@ -6,9 +6,6 @@
 #@contact: zilov.d@gamail.com
 
 import argparse
-import os
-import os.path
-from inspect import getsourcefile
 
 def config_universal(prefix, outdir, reference):
     config_uni = f"""
@@ -17,6 +14,8 @@ prefix: "{prefix}"
 #ASSEMBLY
 assembly_dir: "{outdir}/genome_assembly/unicycler"
 assembly: "{outdir}/genome_assembly/unicycler/assembly.fasta"
+contera_dir: "{outdir}/genome_assembly/contera"
+contera_out_file: "{outdir}/genome_assembly/contera/assembly_filtered.fasta"
 
 #ASSEMBLY QUALITY CONTROL
 quast_dir: "{outdir}/genome_assembly/QC/quast"
