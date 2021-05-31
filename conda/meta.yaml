@@ -1,0 +1,25 @@
+package:
+  name: pannopi
+  version: 1.0.0
+
+source:
+  git_url: https://github.com/aglabx/pannopi.git
+
+requirements:
+  run:
+    - python
+    - unzip
+    - tar
+    - gzip
+    - blast
+    - snakemake >=6.4.0
+    - eggnog =2.1.2
+
+test:
+  commands:
+    - pannopi -h
+
+about:
+  home: https://github.com/aglabx/pannopi
+  license: GPLv3
+  summary: 'From reads to functional annotation pipeline'
