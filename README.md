@@ -25,15 +25,16 @@ Pannopi is available in conda, to install and set is use following commands:
    pannopi_download_db -m set -e /path/to/eggnog/database -b /path/to/blast/database/nt
    ```
 4) To run Pannopi on your reads use one of the following commands: 
-   ```# If you have only short reads
-      pannopi -m short -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -r /path/to/reference.fasta -t 32 -o /path/to/outdir
+   ```
+   # If you have only short reads
+   pannopi -m short -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -r /path/to/reference.fasta -t 32 -o /path/to/outdir
       
-      # If you have only long reads
-      pannopi -m long -l /path/to/long_read.fastq -t 32 -o /path/to/outdir
+   # If you have only long reads
+   pannopi -m long -l /path/to/long_read.fastq -t 32 -o /path/to/outdir
       
-      # If you have both short and long reads
-      pannopi -m hybrid -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -l /path/to/long_read.fastq -t 32 -o /path/to/outdir
-      ```
+   # If you have both short and long reads
+   pannopi -m hybrid -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -l /path/to/long_read.fastq -t 32 -o /path/to/outdir
+   ```
 
 ## Assembly Modes
 1) **Short** - mode for analysis of short reads. Starts with preparation of reads with [v2trim]() and [rmdup](). 
