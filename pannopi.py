@@ -83,6 +83,13 @@ def config_hybrid(forward_read, reverse_read, long_read,reference_fasta, prefix,
     print(command)
     os.system(command)
 
+def config_anno(assembly, reference_fasta, prefix, outdir, mode, execution_folder, config_file):
+    #Config-maker run
+    command = f"{execution_folder}/scripts/config-maker.py -a {assembly} -r {reference_fasta} " \
+              f"-p {prefix} -o {outdir} -m {mode} -c {config_file}"
+    print(command)
+    os.system(command)
+
 
 def snakerun(snakefile, threads, config_file, debug):
 
@@ -101,13 +108,19 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Pannopi - a tool for prokariotic genome assembly and annotation.')
     parser.add_argument('-m','--mode', help="mode to use [default = short]", 
-                        choices=["short", "long", "hybrid"], default="short")
-    parser.add_argument('-r','--reference', help="path to reference asssembly in FASTA format", required=False, default="0")
-    parser.add_argument('-1','--forward_reads', help="path to forward short read file in FASTQ format", default="0")
-    parser.add_argument('-2','--reverse_reads', help="path to reverse short read file in FASTQ format", default="0")
-    parser.add_argument('-l','--long_reads', help="path to long read file in FASTQ format", default="0")
+                        choices=["short", "long", "hybrid", "anno"], default="short")
+    parser.add_argument('-r','--reference', help="path to reference (or closest) assembly in FASTA format "
+                                                 "[optional for each mode]", required=False, default="0")
+    parser.add_argument('-1','--forward_reads', help="path to forward short read file in FASTQ format "
+                                                     "[required for short and hybrid modes]", default="0")
+    parser.add_argument('-2','--reverse_reads', help="path to reverse short read file in FASTQ format "
+                                                     "[required for short and hybrid modes]", default="0")
+    parser.add_argument('-a', '--assembly', help="path to assembly file in FASTA format "
+                                                 "[required for anno mode]", default="0")
+    parser.add_argument('-l','--long_reads', help="path to long read file in FASTQ format "
+                                                  "[required for long and hybrid modes]", default="0")
     parser.add_argument('-p','--prefix', help="prefix for output files", default="0")
-    parser.add_argument('-o','--outdir', help='output directory', required=True)
+    parser.add_argument('-o','--outdir', help='output directory [Required]', required=True)
     parser.add_argument('-t','--threads', help='number of threads [default == 8]', default = "8")
     parser.add_argument('-d','--debug', help='debug mode', action='store_true')
     
@@ -122,6 +135,7 @@ if __name__ == '__main__':
     threads = args["threads"]
     debug = args["debug"]
     mode = args["mode"]
+    assembly = args["assembly"]
     
     execution_folder = os.path.dirname(os.path.dirname(os.path.abspath(getsourcefile(lambda: 0))))
     execution_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -146,8 +160,10 @@ if __name__ == '__main__':
         if mode == "short":
             if forward_read == "0" or reverse_read == "0":
                 parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read}!")
-            elif long_read != "0":
-                parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read} only!\nTo analyse long-reads use long-reads mode or hybrid mode")
+            elif (long_read or assembly) != "0":
+                parser.error("\nShort-reads mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read} only!\n"
+                             "To analyse long-reads use long-reads mode or hybrid mode. "
+                             "To run only annotation on your assembly use anno mode.\n")
             else:
                 forward_read = os.path.abspath(forward_read)
                 reverse_read = os.path.abspath(reverse_read)
@@ -157,21 +173,31 @@ if __name__ == '__main__':
         elif mode == "long":
             if long_read == "0":
                 parser.error("\nLong-read mode requires -l {path_to_long_reads.fq}!")
-            elif forward_read != "0" or reverse_read != "0":
-                parser.error("\nLong-reads mode requires -l {path_to_long_reads.fq} only!\nTo analyse short-reads use short-reads mode or hybrid mode")
+            elif (forward_read or reverse_read or assembly) != "0":
+                parser.error("\nLong-reads mode requires -l {path_to_long_reads.fq} only!\nTo analyse short-reads "
+                             "use short-reads mode or hybrid mode. To run only annotation on your assembly use anno mode.\n")
             else:
                 long_read = os.path.abspath(long_read)
                 snakefile = os.path.join(execution_folder, "workflows/long_mode.snakefile")
                 config_long(long_read, reference_fasta, prefix, outdir, mode, execution_folder, config_file)
 
         elif mode == "hybrid":
-            if forward_read == "0" or reverse_read == "0" or long_read == "0":
+            if (forward_read or reverse_read or long_read) == "0":
                 parser.error("\nHybrid mode requires -1 {path_to_forward_read} AND -2 {path_to_reverse_read} AND -l {path_to_long_reads.fq}!")
+            elif assembly != "0":
+                parser.error("\nIf you wanna only annotate your genome, use anno mode!")
             else:
                 long_read = os.path.abspath(long_read)
                 forward_read = os.path.abspath(forward_read)
                 reverse_read = os.path.abspath(reverse_read)
                 snakefile = os.path.join(execution_folder, "workflows/hybrid_mode.snakefile")
                 config_hybrid(forward_read, reverse_read, long_read,reference_fasta, prefix, outdir, mode, execution_folder, config_file)
+        elif mode == "anno":
+            if assembly == "0" or (forward_read or reverse_read or long_read) != "0":
+                parser.error("\nAnno mode requires -a assembly.fasta only! You can provide reference (or closest) genome as well.")
+            else:
+                assembly = os.path.abspath(assembly)
+                snakefile = os.path.join(execution_folder, "workflows/anno_mode.snakefile")
+                config_anno(assembly, reference_fasta, prefix, outdir, mode, execution_folder, config_file)
 
     snakerun(snakefile, threads, config_file, debug)
