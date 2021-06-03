@@ -35,7 +35,7 @@ Pannopi is available in conda, to install and set is use following commands:
    # If you have both short and long reads
    pannopi -m hybrid -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -l /path/to/long_read.fastq -t 32 -o /path/to/outdir
 
-   # If you have only assembly and wanna QC and annotate your genome 
+   # If you have only assembly and wanna evaluate QC and annotate your genome 
    pannopi -m anno -a /path/to/assembly.fasta -r /path/to/reference -t 32 -o /path/to/outdir
    ```
 
