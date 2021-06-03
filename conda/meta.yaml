@@ -7,10 +7,10 @@ source:
 
 requirements:
   run:
-    - blast
+    - blast >= 2.11.0
     - snakemake >=6.4.0
     - eggnog-mapper ==2.1.2
-
+    - mamba >= 0.13.0
 test:
   commands:
     - pannopi -h
