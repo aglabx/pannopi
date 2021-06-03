@@ -39,14 +39,15 @@ Pannopi is available in conda, to install and set is use following commands:
    pannopi -m anno -a /path/to/assembly.fasta -r /path/to/reference -t 32 -o /path/to/outdir
    ```
 
-## Assembly Modes
-All modes are use [Unicycler](https://github.com/rrwick/Unicycler) tool for genome assembly, modes are:
+## Modes
+
+All modes except **anno** are used [Unicycler](https://github.com/rrwick/Unicycler) tool for genome assembly, modes are:
 1) **Short** - mode for analysis of short reads. Starts with preparation of reads with [v2trim](https://github.com/aglabx/v2trim) and [rmdub](https://github.com/aglabx/rmdub). 
-   Data preparation QC with [FastQC](https://github.com/s-andrews/FastQC), [Jellyfish](https://github.com/gmarcais/Jellyfish) and [GenomeScope v2](https://github.com/tbenavi1/genomescope2.0). Assembly with  
+   Data preparation QC with [FastQC](https://github.com/s-andrews/FastQC), [Jellyfish](https://github.com/gmarcais/Jellyfish) and [GenomeScope v2](https://github.com/tbenavi1/genomescope2.0).
 2) **Long** - mode for analysis of short reads. 
 3) **Hybrid** - mode for analysis of both short- and long-reads with hybrid assembly. Reads QC as in **Short** mode.
+4) **Anno** - mode to evaluate quality of your assembly and to annotate it.
 
-Also pannopi has **anno** mode to evaluate quality of your assembly and to annotate it.
 ## Filtration and Assembly QC
 1) Filtration of technical sequences contamination with [Contera](https://github.com/zilov/contera). If BLAST NT database is provided Contera will report 
    about genome taxonomic content.

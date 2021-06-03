@@ -7,13 +7,23 @@
 
 import argparse
 
+def config_assembly(outdir, assembly=False):
+    if assembly:
+        assembly_conf = f"""
+assembly_provided: "{assembly}"
+assembly_dir: "{outdir}/genome_assembly"
+assembly: "{outdir}/genome_assembly/assembly.fasta"
+        """
+    else:
+        assembly_conf = f"""
+assembly_dir: "{outdir}/genome_assembly/unicycler"
+assembly: "{outdir}/genome_assembly/unicycler/assembly.fasta" 
+"""
+    return assembly_conf
+
 def config_universal(prefix, outdir, reference):
     config_uni = f"""
 prefix: "{prefix}"    
-
-#ASSEMBLY
-assembly_dir: "{outdir}/genome_assembly/unicycler"
-assembly: "{outdir}/genome_assembly/unicycler/assembly.fasta"
 contera_dir: "{outdir}/genome_assembly/contera"
 contera_out_file: "{outdir}/genome_assembly/contera/assembly_filtered.fasta"
 
@@ -79,8 +89,8 @@ eggnog_bench: "{outdir}/benchmark/eggnog.tsv"
     if reference:
         config_ref = f"""
 reference_file: "{reference}"
-fastani_dir: "{outdir}/structural_annotation/QC/fastani"
-fastani_outfile: "{outdir}/structural_annotation/QC/fastani/{prefix}_fastani.txt"
+fastani_dir: "{outdir}/struct_annotation/QC/fastani"
+fastani_outfile: "{outdir}/struct_annotation/QC/fastani/{prefix}_fastani.txt"
 """
     else:
         config_ref = """
@@ -140,16 +150,18 @@ def config_hybrid_mode(long_read, forward_read, reverse_read, prefix, outdir):
 
     
 
-def main(forward_read, reverse_read, long_read, prefix, outdir, mode, config_file):
+def main(forward_read, reverse_read, long_read, assembly, reference, prefix, outdir, mode, config_file):
     
     if mode == "short":
         config = config_short_mode(forward_read, reverse_read, prefix, outdir) + \
-                 config_universal(prefix, outdir, reference)
+                 config_universal(prefix, outdir, reference) + config_assembly(outdir)
     elif mode == "long":
-        config = config_long_mode(long_read, prefix, outdir) + config_universal(prefix, outdir, reference)
+        config = config_long_mode(long_read, prefix, outdir) + config_universal(prefix, outdir, reference) + config_assembly(outdir)
     elif mode == "hybrid":
         config = config_hybrid_mode(long_read, forward_read, reverse_read, prefix, outdir) + \
-                 config_universal(prefix, outdir, reference)
+                 config_universal(prefix, outdir, reference) + config_assembly(outdir)
+    elif mode == "anno":
+        config = config_universal(prefix, outdir, reference) + config_assembly(outdir, assembly)
     
     
     with open(config_file, "w") as fw:
@@ -158,10 +170,11 @@ def main(forward_read, reverse_read, long_read, prefix, outdir, mode, config_fil
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Program description.')
-    parser.add_argument('-1', '--forward_read', help='sample directory', required=False, default=False)
-    parser.add_argument('-2', '--reverse_read', help='sample directory', required=False, default=False)
-    parser.add_argument('-l', '--long_read', help='sample directory', required=False, default=False)
+    parser = argparse.ArgumentParser(description='Config creater for Pannopi pipeline')
+    parser.add_argument('-1', '--forward_read', help='path to forward read file', required=False, default=False)
+    parser.add_argument('-2', '--reverse_read', help='path to reverse read file', required=False, default=False)
+    parser.add_argument('-l', '--long_read', help='path to long read file', required=False, default=False)
+    parser.add_argument('-a', '--assembly', help='path to assembly fasta', required=False, default=False)
     parser.add_argument('-r', '--reference', help='path to reference file', required=False, default=False)
     parser.add_argument('-m', '--mode', help = 'Pannopi mode', required = True)
     parser.add_argument('-p', '--prefix', help='Prefix for output files', required=True)
@@ -172,6 +185,7 @@ if __name__ == '__main__':
     # All of parameters goes in absolute paths from pannopi.py
     forward_read = args["forward_read"]
     reverse_read = args["reverse_read"]
+    assembly = args["assembly"]
     long_read = args["long_read"]
     reference = args["reference"]
     outdir = args["outdir"]
@@ -179,4 +193,4 @@ if __name__ == '__main__':
     prefix =args["prefix"]
     config_file = args["configfile"]
 
-    main(forward_read, reverse_read, long_read, prefix, outdir, mode, config_file)
+    main(forward_read, reverse_read, long_read, assembly, reference, prefix, outdir, mode, config_file)
