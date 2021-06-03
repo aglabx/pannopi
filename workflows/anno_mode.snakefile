@@ -4,7 +4,7 @@ rule all:
 
 include: "settings.snakefile"
 
-include: "../rules/assembly_rules/unicycler_long.smk"
+include: "../rules/assembly_rules/anno_no_assembly.smk"
 
 if locals.blastn_db != "False":
     include: "../rules/qc_rules/contera_aio.smk"
@@ -19,7 +19,6 @@ else:
     include: "../rules/qc_ref.smk"
 
 include: "../rules/functional_annotation.smk"
-
 
 if config["reference_file"] == "False":
     include: "../rules/results_long.smk"
