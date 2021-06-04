@@ -1,4 +1,5 @@
 channels:
+  - bioconda
   - aglab
 dependencies:
   - contera
