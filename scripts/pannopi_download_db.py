@@ -65,7 +65,7 @@ def download_eggnog(outdir):
 
 
 def download_blast(outdir):
-    blast_nt_url = "https://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/swissprot.gz"
+    blast_nt_url = "https://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/nt.gz"
     blastnt_data_dir = os.path.join(outdir, "blastnt")
     blast_db = os.path.join(blastnt_data_dir, "nt")
     if not os.path.exists(blastnt_data_dir):
