@@ -1,16 +1,16 @@
 package:
   name: pannopi
-  version: 1.0.0
+  version: 1.0.1
 
 source:
   git_url: https://github.com/aglabx/pannopi.git
 
 requirements:
   run:
-    - blast >= 2.11.0
+    - blast >=2.11.0
     - snakemake >=6.4.0
     - eggnog-mapper ==2.1.2
-    - mamba >= 0.13.0
+    - mamba >=0.13.0
 test:
   commands:
     - pannopi -h
