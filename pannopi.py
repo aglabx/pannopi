@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @created: <data>
-# @author: <name>
-# @contact: <email>
+# @created: 30.05.2021
+# @author: Danil Zilov
+# @contact: zilov.d@gmail.com
 
 import argparse
 import os
