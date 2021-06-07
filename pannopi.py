@@ -150,9 +150,11 @@ if __name__ == '__main__':
 
     if prefix == "0":
         if forward_read != "0":
-            prefix = os.path.basename(forward_read).split("_")[0]
+            prefix = os.path.splitext(os.path.basename(forward_read))[0]
         elif long_read != "0":
-            prefix = os.path.basename(long_read).split(".")[0]
+            prefix =os.path.splitext(os.path.basename(long_read))[0]
+        elif assembly != "0":
+            prefix = os.path.splitext(os.path.basename(assembly))[0]
 
 
     if check_for_databases(settings_file):
