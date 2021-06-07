@@ -36,6 +36,7 @@ quast_out_file: "{outdir}/genome_assembly/QC/quast/report.txt"
 annotation_dir: "{outdir}/struct_annotation/prokka/"
 annotation_faa: "{outdir}/struct_annotation/prokka/{prefix}.faa"
 annotation_gbk: "{outdir}/struct_annotation/prokka/{prefix}.gbk"
+prokka_report: "{outdir}/struct_annotation/prokka/{prefix}.txt"
 # busco QC
 busco_run_dir: "{outdir}/struct_annotation/QC"
 busco_summary: "{outdir}/struct_annotation/QC/busco/short_summary.specific*.txt"
