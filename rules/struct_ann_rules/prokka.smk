@@ -7,6 +7,7 @@ rule annotation:
     output:
         annotation_faa = config["annotation_faa"],
         annotation_gbk = config["annotation_gbk"],
+        report_txt = config["prokka_report"],
     log: config["prokka_log"]
     benchmark: config["prokka_bench"]
     params:
